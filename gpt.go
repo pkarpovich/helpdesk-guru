@@ -11,42 +11,44 @@ type Message struct {
 }
 
 type ModelContext struct {
-	authToken string
-	model     string
-	messages  []Message
-	client    *openai.Client
+	authToken       string
+	model           string
+	contextMessages []Message
+	userMessages    []Message
+	client          *openai.Client
 }
 
 func CreateModelContext(authToken string, model string) ModelContext {
 	client := openai.NewClient(authToken)
 
 	return ModelContext{
-		authToken: authToken,
-		model:     model,
-		messages:  make([]Message, 0),
-		client:    client,
+		authToken:       authToken,
+		model:           model,
+		userMessages:    make([]Message, 0),
+		contextMessages: make([]Message, 0),
+		client:          client,
 	}
 }
 
-func (mc *ModelContext) InitMessageContext(messages []Message) {
-	mc.messages = messages
+func (mc *ModelContext) InitContextMessages(messages []Message) {
+	mc.contextMessages = messages
 }
 
-func (mc *ModelContext) Ask(ctx context.Context) (string, error) {
-	messages := make([]openai.ChatCompletionMessage, 0)
+func (mc *ModelContext) ClearUserMessages() {
+	mc.userMessages = make([]Message, 0)
+}
 
-	for _, message := range mc.messages {
-		messages = append(messages, openai.ChatCompletionMessage{
-			Role:    message.Role,
-			Content: message.Content,
-		})
-	}
+func (mc *ModelContext) Ask(ctx context.Context, message Message) (string, error) {
+	mc.userMessages = append(mc.userMessages, message)
+
+	messages := append(mc.contextMessages, mc.userMessages...)
+	aiMessages := castToOpenAIMessages(messages)
 
 	resp, err := mc.client.CreateChatCompletion(
 		ctx,
 		openai.ChatCompletionRequest{
 			Model:    mc.model,
-			Messages: messages,
+			Messages: aiMessages,
 		},
 	)
 
@@ -55,4 +57,17 @@ func (mc *ModelContext) Ask(ctx context.Context) (string, error) {
 	}
 
 	return resp.Choices[0].Message.Content, nil
+}
+
+func castToOpenAIMessages(messages []Message) []openai.ChatCompletionMessage {
+	openAIMessages := make([]openai.ChatCompletionMessage, 0)
+
+	for _, message := range messages {
+		openAIMessages = append(openAIMessages, openai.ChatCompletionMessage{
+			Role:    message.Role,
+			Content: message.Content,
+		})
+	}
+
+	return openAIMessages
 }

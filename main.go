@@ -3,24 +3,40 @@ package main
 import (
 	"context"
 	"fmt"
+	"log"
 	"os"
 )
 
 func main() {
 	token := os.Getenv("OPENAI_API_KEY")
+	if token == "" {
+		log.Fatal("OPENAI_API_KEY environment variable is not set")
+		return
+	}
 
-	modelCtx := CreateModelContext(token, "gpt-3.5-turbo")
-	modelCtx.InitMessageContext([]Message{
-		{
-			Role:    "user",
-			Content: "Как называется Ваша компания и зарегистрирована ли она?",
-		},
-	})
+	model := os.Getenv("OPENAI_MODEL")
+	if model == "" {
+		model = "gpt-3.5-turbo"
+	}
 
-	answer, err := modelCtx.Ask(context.Background())
+	contextFile := os.Getenv("CONTEXT_FILE")
+	if contextFile == "" {
+		contextFile = "context.txt"
+	}
+
+	messages, err := ParseFile(contextFile)
+	if err != nil {
+		log.Fatalf("Error parsing file: %v\n", err)
+		return
+	}
+
+	modelCtx := CreateModelContext(token, model)
+	modelCtx.InitContextMessages(messages)
+
+	answer, err := modelCtx.Ask(context.Background(), Message{Role: "user", Content: "Куда я могу написать?"})
 
 	if err != nil {
-		fmt.Printf("ChatCompletion error: %v\n", err)
+		log.Printf("Error asking: %v\n", err)
 		return
 	}
 
