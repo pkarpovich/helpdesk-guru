@@ -1,8 +1,6 @@
 package main
 
 import (
-	"context"
-	"fmt"
 	"log"
 	"os"
 )
@@ -33,12 +31,6 @@ func main() {
 	modelCtx := CreateModelContext(token, model)
 	modelCtx.InitContextMessages(messages)
 
-	answer, err := modelCtx.Ask(context.Background(), Message{Role: "user", Content: "Куда я могу написать?"})
-
-	if err != nil {
-		log.Printf("Error asking: %v\n", err)
-		return
-	}
-
-	fmt.Println(answer)
+	serverCtx := NewServerContext(&modelCtx)
+	StartServer(serverCtx, ":8443")
 }
