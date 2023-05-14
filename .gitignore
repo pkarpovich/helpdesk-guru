@@ -180,3 +180,4 @@ Temporary Items
 # End of https://www.toptal.com/developers/gitignore/api/jetbrains+all,goland+all,macos
 
 context.txt
+.env
