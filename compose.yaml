@@ -9,7 +9,13 @@ services:
       PERSIST_DIRECTORY: ${PERSIST_DIRECTORY}
       OPENAI_API_KEY: ${OPENAI_API_KEY}
       OPENAI_MODEL: ${OPENAI_MODEL}
-    ports:
-      - 50051:50051
     volumes:
       - ./services/gpt-context/source_documents:/app/services/gpt-context/source_documents
+
+  telegram-bot:
+    build:
+      context: .
+      dockerfile: services/telegram-bot/Dockerfile
+    environment:
+      GPT_SERVICE_ADDRESS: gpt-service:50051
+      TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN}
