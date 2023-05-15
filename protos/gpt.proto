@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package gpt;
 
-option go_package = "github.com/pkarpovich/gpt/proto";
+option go_package = "services/telegram-bot/lib";
 
 service GptService {
   rpc ask (AskRequest) returns (AskResponse) {}
