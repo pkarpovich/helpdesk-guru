@@ -2,7 +2,7 @@ services:
   gpt-service:
     build:
       context: .
-      dockerfile: ./app/services/gpt-context/Dockerfile
+      dockerfile: services/gpt-context/Dockerfile
       args:
         OPENAI_API_KEY: ${OPENAI_API_KEY}
     environment:
@@ -12,4 +12,4 @@ services:
     ports:
       - 50051:50051
     volumes:
-      - ./app/services/gpt-context/source_documents:/app/app/services/gpt-context/source_documents
+      - ./services/gpt-context/source_documents:/app/services/gpt-context/source_documents

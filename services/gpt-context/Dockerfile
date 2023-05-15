@@ -26,19 +26,18 @@ RUN apt-get update && apt-get install -y \
 
 
 RUN --mount=type=cache,target=/root/.cache/pip \
-    --mount=type=bind,source=./app/services/gpt-context/requirements.txt,target=requirements.txt \
+    --mount=type=bind,source=./services/gpt-context/requirements.txt,target=requirements.txt \
     python -m pip install -r requirements.txt
 
 COPY . .
 
-WORKDIR /app/app/services/gpt-context
+WORKDIR /app/services/gpt-context
 
 RUN mkdir -p lib
 RUN make build_proto
 RUN python ingest.py
 
 USER appuser
-
 
 EXPOSE 50051
 
