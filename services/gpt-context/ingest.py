@@ -2,15 +2,13 @@ import os
 from dotenv import load_dotenv
 from langchain.document_loaders import TextLoader, PDFMinerLoader, CSVLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain.vectorstores import Chroma
-from langchain.embeddings import OpenAIEmbeddings
-from constants import CHROMA_SETTINGS
+from langchain.embeddings.openai import OpenAIEmbeddings
+from adapters.weaviate_adapter import WeaviateVectorStoreAdapter
 
 load_dotenv()
 
 
 def main():
-    persist_directory = os.environ.get('PERSIST_DIRECTORY')
 
     if os.environ.get("OPENAI_API_KEY") is None:
         print("OpenAI API key not set")
@@ -41,9 +39,11 @@ def main():
     documents = loader.load()
     text_splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=50)
     texts = text_splitter.split_documents(documents)
-    openai = OpenAIEmbeddings()
-    db = Chroma.from_documents(texts, openai, persist_directory=persist_directory, client_settings=CHROMA_SETTINGS)
-    db.persist()
+    embedding = OpenAIEmbeddings()
+
+    vector_store = WeaviateVectorStoreAdapter(embedding=embedding)
+    vector_store.from_documents(texts, embedding)
+
     print("All files loaded")
 
 

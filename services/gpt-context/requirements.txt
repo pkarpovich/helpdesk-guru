@@ -1,4 +1,4 @@
-langchain==0.0.168
+langchain==0.0.180
 chromadb==0.3.22
 python-dotenv==1.0.0
 gptcache==0.1.23
@@ -8,3 +8,4 @@ grpcio==1.54.2
 grpcio-tools==1.54.2
 betterproto==2.0.0b5
 betterproto[compiler]==2.0.0b5
+weaviate-client==3.19.2

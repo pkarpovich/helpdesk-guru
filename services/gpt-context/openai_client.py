@@ -1,28 +1,26 @@
-import langchain
-
-from langchain.chains import RetrievalQA
-from langchain.embeddings import OpenAIEmbeddings
 from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
-from langchain.vectorstores import Chroma
-from langchain.chat_models import ChatOpenAI
-from langchain.cache import GPTCache
-from constants import CHROMA_SETTINGS
-from gptcache.adapter.api import init_similar_cache
+from langchain.chat_models.openai import ChatOpenAI
+from langchain.chains import ConversationalRetrievalChain
+from langchain.memory import ConversationBufferMemory
+from langchain.embeddings.openai import OpenAIEmbeddings
+
+from adapters.weaviate_adapter import WeaviateVectorStoreAdapter
 
 
 class OpenaiClient:
-    def __init__(self, persist_directory: str, model_name: str):
-        embedding = OpenAIEmbeddings()
-        db = Chroma(persist_directory=persist_directory, embedding_function=embedding, client_settings=CHROMA_SETTINGS)
-        retriever = db.as_retriever()
+    def __init__(self, model_name: str):
         callbacks = [StreamingStdOutCallbackHandler()]
 
-        llm = ChatOpenAI(model_name=model_name, callbacks=callbacks)
-        langchain.llm_cache = GPTCache(init_func=lambda cache_obj: init_similar_cache(cache_obj=cache_obj))
+        llm = ChatOpenAI(model_name=model_name, callbacks=callbacks, temperature=0.2)
+        embedding = OpenAIEmbeddings()
 
-        self.qa = RetrievalQA.from_chain_type(llm=llm, chain_type="stuff", retriever=retriever,
-                                              return_source_documents=True)
+        vector_store = WeaviateVectorStoreAdapter(embedding=embedding)
+        db = vector_store.db
+
+        self.memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True)
+        self.qa = ConversationalRetrievalChain.from_llm(llm, db.as_retriever(), memory=self.memory)
 
     def ask(self, query: str) -> str:
-        res = self.qa(query)
-        return res['result']
+        res = self.qa({"question": query})
+
+        return res["answer"]

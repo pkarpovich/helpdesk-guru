@@ -17,7 +17,7 @@ async def main():
         print("OpenAI API key not set")
         return None
 
-    openai_client = OpenaiClient(persist_directory, model_name)
+    openai_client = OpenaiClient(model_name)
 
     server = Server([GptService(openai_client)])
     await server.start("0.0.0.0", 50051)

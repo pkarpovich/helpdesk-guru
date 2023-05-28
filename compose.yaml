@@ -19,3 +19,24 @@ services:
     environment:
       GPT_SERVICE_ADDRESS: gpt-service:50051
       TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN}
+    depends_on:
+      - gpt-service
+
+  weaviate:
+    image: semitechnologies/weaviate:1.19.6
+    expose:
+      - 8080
+    ports:
+      - 8080:8080
+    restart: unless-stopped
+    environment:
+      QUERY_DEFAULTS_LIMIT: 25
+      AUTHENTICATION_ANONYMOUS_ACCESS_ENABLED: "true"
+      PERSISTENCE_DATA_PATH: /var/lib/weaviate
+      DEFAULT_VECTORIZER_MODULE: 'none'
+      CLUSTER_HOSTNAME: 'node1'
+    volumes:
+      - weaviate-data:/var/lib/weaviate
+
+volumes:
+  weaviate-data:
