@@ -6,6 +6,11 @@ class VectorStoreAdapter(ABC):
     def db(self):
         pass
 
+    @property
+    @abstractmethod
+    def retriever(self):
+        pass
+
     @abstractmethod
     def from_documents(self, documents, embeddings, **kwargs):
         pass

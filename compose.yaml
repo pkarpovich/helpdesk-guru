@@ -22,21 +22,15 @@ services:
     depends_on:
       - gpt-service
 
-  weaviate:
-    image: semitechnologies/weaviate:1.19.6
+  redis-store:
+    image: redis/redis-stack:latest
     expose:
-      - 8080
+      - 6379
     ports:
-      - 8080:8080
+      - 6379:6379
     restart: unless-stopped
-    environment:
-      QUERY_DEFAULTS_LIMIT: 25
-      AUTHENTICATION_ANONYMOUS_ACCESS_ENABLED: "true"
-      PERSISTENCE_DATA_PATH: /var/lib/weaviate
-      DEFAULT_VECTORIZER_MODULE: 'none'
-      CLUSTER_HOSTNAME: 'node1'
     volumes:
-      - weaviate-data:/var/lib/weaviate
+      - redis-cache-data:/data
 
 volumes:
-  weaviate-data:
+  redis-cache-data:

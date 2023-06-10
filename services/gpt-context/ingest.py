@@ -3,7 +3,8 @@ from dotenv import load_dotenv
 from langchain.document_loaders import TextLoader, PDFMinerLoader, CSVLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.embeddings.openai import OpenAIEmbeddings
-from adapters.weaviate_adapter import WeaviateVectorStoreAdapter
+
+from adapters.redis_adapter import RedisStoreAdapter
 
 load_dotenv()
 
@@ -41,7 +42,7 @@ def main():
     texts = text_splitter.split_documents(documents)
     embedding = OpenAIEmbeddings()
 
-    vector_store = WeaviateVectorStoreAdapter(embedding=embedding)
+    vector_store = RedisStoreAdapter(embedding=embedding)
     vector_store.from_documents(texts, embedding)
 
     print("All files loaded")

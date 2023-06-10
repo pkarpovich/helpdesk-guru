@@ -8,7 +8,6 @@ from gpt_service import GptService
 
 load_dotenv()
 
-persist_directory = os.environ.get('PERSIST_DIRECTORY')
 model_name = os.environ.get('OPENAI_MODEL')
 
 
