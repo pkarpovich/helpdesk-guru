@@ -16,7 +16,9 @@ async def main():
         print("OpenAI API key not set")
         return None
 
-    openai_client = OpenaiClient(model_name)
+    redis_url = os.environ.get("REDIS_URL") or "redis://localhost:6379"
+
+    openai_client = OpenaiClient(model_name, redis_url)
 
     server = Server([GptService(openai_client)])
     await server.start("0.0.0.0", 50051)

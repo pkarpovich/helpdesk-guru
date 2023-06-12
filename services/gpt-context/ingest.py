@@ -10,10 +10,11 @@ load_dotenv()
 
 
 def main():
-
     if os.environ.get("OPENAI_API_KEY") is None:
         print("OpenAI API key not set")
         return None
+
+    redis_url = os.environ.get("REDIS_URL") or "redis://localhost:6379"
 
     loader = None
 
@@ -42,7 +43,7 @@ def main():
     texts = text_splitter.split_documents(documents)
     embedding = OpenAIEmbeddings()
 
-    vector_store = RedisStoreAdapter(embedding=embedding)
+    vector_store = RedisStoreAdapter(redis_url, embedding=embedding)
     vector_store.from_documents(texts, embedding)
 
     print("All files loaded")

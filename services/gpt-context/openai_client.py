@@ -14,11 +14,11 @@ from prompt import qa_prompt
 
 
 class OpenaiClient:
-    def __init__(self, model_name: str):
+    def __init__(self, model_name: str, redis_url: str):
         embedding = OpenAIEmbeddings()
 
         langchain.llm_cache = RedisSemanticCache(
-            redis_url="redis://localhost:6379",
+            redis_url=redis_url,
             embedding=embedding,
         )
 
@@ -26,7 +26,7 @@ class OpenaiClient:
 
         model = ChatOpenAI(model_name=model_name, callbacks=callbacks, temperature=0.7, verbose=True)
 
-        vector_store = RedisStoreAdapter(embedding=embedding)
+        vector_store = RedisStoreAdapter(redis_url, embedding=embedding)
 
         self.memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True)
 
