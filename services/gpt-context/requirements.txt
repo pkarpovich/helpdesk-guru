@@ -6,3 +6,4 @@ grpcio==1.54.2
 grpcio-tools==1.54.2
 betterproto==2.0.0b5
 betterproto[compiler]==2.0.0b5
+redis==4.5.5

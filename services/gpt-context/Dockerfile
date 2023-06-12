@@ -1,9 +1,6 @@
 ARG PYTHON_VERSION=3.11.3
 FROM python:${PYTHON_VERSION}-slim as base
 
-ARG OPENAI_API_KEY
-ENV OPENAI_API_KEY=${OPENAI_API_KEY}
-
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
@@ -35,10 +32,9 @@ WORKDIR /app/services/gpt-context
 
 RUN mkdir -p lib
 RUN make build_proto
-RUN python ingest.py
 
 USER appuser
 
 EXPOSE 50051
 
-CMD python main.py
+CMD python ingest.py && python main.py

@@ -69,7 +69,7 @@ func startTelegramBot() {
 	}
 
 	for update := range updates {
-		if update.Message == nil {
+		if update.Message == nil || update.Message.Text == "" {
 			continue
 		}
 
