@@ -1,4 +1,15 @@
 ARG GO_VERSION=1.20
+
+FROM onosproject/protoc-go:v1.3.0 AS proto
+
+WORKDIR /src
+
+COPY ./protos ./protos
+COPY ./Makefile ./Makefile
+
+RUN make build_proto
+
+
 FROM golang:${GO_VERSION} AS build
 WORKDIR /src
 
@@ -7,9 +18,10 @@ RUN --mount=type=cache,target=/go/pkg/mod/ \
     --mount=type=bind,source=/services/telegram-bot/go.mod,target=go.mod \
     go mod download -x
 
-RUN --mount=type=cache,target=/go/pkg/mod/ \
-    --mount=type=bind,source=/services/telegram-bot,target=. \
-    CGO_ENABLED=0 go build -o /bin/bot .
+COPY ./services/telegram-bot .
+COPY --from=proto src/services/telegram-bot/lib ./lib
+
+RUN CGO_ENABLED=0 go build -o /bin/bot .
 
 
 FROM alpine:latest AS final
