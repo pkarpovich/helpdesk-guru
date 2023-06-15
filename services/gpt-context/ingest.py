@@ -5,6 +5,7 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.embeddings.openai import OpenAIEmbeddings
 
 from adapters.redis_adapter import RedisStoreAdapter
+from adapters.weaviate_adapter import WeaviateVectorStoreAdapter
 
 load_dotenv()
 
@@ -15,6 +16,7 @@ def main():
         return None
 
     redis_url = os.environ.get("REDIS_URL") or "redis://localhost:6379"
+    weaviate_url = os.environ.get("WEAVIATE_URL") or "http://localhost:8080"
 
     loader = None
 
@@ -39,11 +41,11 @@ def main():
         return None
 
     documents = loader.load()
-    text_splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=50)
+    text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
     texts = text_splitter.split_documents(documents)
     embedding = OpenAIEmbeddings()
 
-    vector_store = RedisStoreAdapter(redis_url, embedding=embedding)
+    vector_store = WeaviateVectorStoreAdapter(weaviate_url, embedding=embedding)
     vector_store.from_documents(texts, embedding)
 
     print("All files loaded")

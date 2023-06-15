@@ -2,19 +2,19 @@ import langchain
 
 from langchain.cache import RedisSemanticCache
 from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
-from langchain.chains import ConversationalRetrievalChain, LLMChain
+from langchain.chains import ConversationalRetrievalChain, LLMChain, RetrievalQA
 from langchain.chains.chat_vector_db.prompts import CONDENSE_QUESTION_PROMPT
 from langchain.chains.question_answering import load_qa_chain
 from langchain.memory import ConversationBufferMemory
 from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain.chat_models.openai import ChatOpenAI
 
-from adapters.redis_adapter import RedisStoreAdapter
+from adapters.weaviate_adapter import WeaviateVectorStoreAdapter
 from prompt import qa_prompt
 
 
 class OpenaiClient:
-    def __init__(self, model_name: str, redis_url: str):
+    def __init__(self, model_name: str, redis_url: str, weaviate_url: str):
         embedding = OpenAIEmbeddings()
 
         langchain.llm_cache = RedisSemanticCache(
@@ -24,9 +24,10 @@ class OpenaiClient:
 
         callbacks = [StreamingStdOutCallbackHandler()]
 
-        model = ChatOpenAI(model_name=model_name, callbacks=callbacks, temperature=0.7, verbose=True)
+        model = ChatOpenAI(model_name=model_name, callbacks=callbacks, verbose=True, temperature=0.7)
 
-        vector_store = RedisStoreAdapter(redis_url, embedding=embedding)
+        vector_store = WeaviateVectorStoreAdapter(weaviate_url, embedding=embedding)
+        db = vector_store.db
 
         self.memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True)
 
@@ -35,7 +36,7 @@ class OpenaiClient:
 
         self.qa = ConversationalRetrievalChain(
             memory=self.memory,
-            retriever=vector_store.retriever,
+            retriever=db.as_retriever(),
             question_generator=question_generator,
             combine_docs_chain=combine_docs_chain,
         )

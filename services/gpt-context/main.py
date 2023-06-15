@@ -17,8 +17,9 @@ async def main():
         return None
 
     redis_url = os.environ.get("REDIS_URL") or "redis://localhost:6379"
+    weaviate_url = os.environ.get("WEAVIATE_URL") or "http://localhost:8080"
 
-    openai_client = OpenaiClient(model_name, redis_url)
+    openai_client = OpenaiClient(model_name, redis_url, weaviate_url)
 
     server = Server([GptService(openai_client)])
     await server.start("0.0.0.0", 50051)
