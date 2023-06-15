@@ -1,4 +1,4 @@
-from lib.gpt import GptServiceBase, AskResponse, AskRequest
+from lib.gpt import GptServiceBase, AskResponse, AskRequest, ClearHistoryRequest, ClearHistoryResponse
 from openai_client import OpenaiClient
 
 
@@ -8,3 +8,7 @@ class GptService(GptServiceBase):
 
     async def ask(self, ask_request: AskRequest) -> AskResponse:
         return AskResponse(answer=self.openai.ask(ask_request.query))
+
+    async def clear_history(self, clear_history_request: ClearHistoryRequest) -> ClearHistoryResponse:
+        self.openai.clear_history()
+        return ClearHistoryResponse()

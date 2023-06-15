@@ -91,6 +91,11 @@ func startTelegramBot() {
 		case "start":
 			msg = tgbotapi.NewMessage(update.Message.Chat.ID, BotWelcomeMessage)
 		case "clear":
+			err := clearHistory()
+			if err != nil {
+				log.Printf("fail to clear history: %v", err)
+			}
+
 			msg = tgbotapi.NewMessage(update.Message.Chat.ID, BotClearMessage)
 		default:
 			answer, err := askGpt(update.Message.Text)

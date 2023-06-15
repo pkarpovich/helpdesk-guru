@@ -45,3 +45,6 @@ class OpenaiClient:
         res = self.qa({"question": query})
 
         return res["answer"]
+
+    def clear_history(self):
+        self.memory.clear()

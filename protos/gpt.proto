@@ -6,6 +6,7 @@ option go_package = "services/telegram-bot/lib";
 
 service GptService {
   rpc ask (AskRequest) returns (AskResponse) {}
+  rpc clearHistory (ClearHistoryRequest) returns (ClearHistoryResponse) {}
 }
 
 message AskRequest {
@@ -15,3 +16,7 @@ message AskRequest {
 message AskResponse {
   string answer = 1;
 }
+
+message ClearHistoryRequest {}
+
+message ClearHistoryResponse {}

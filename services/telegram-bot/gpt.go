@@ -31,3 +31,13 @@ func askGpt(query string) (string, error) {
 
 	return resp.Answer, nil
 }
+
+func clearHistory() error {
+	client := pb.NewGptServiceClient(conn)
+	_, err := client.ClearHistory(context.Background(), &pb.ClearHistoryRequest{})
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
