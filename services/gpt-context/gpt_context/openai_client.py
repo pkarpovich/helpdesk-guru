@@ -1,14 +1,12 @@
-import langchain
-
 from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
-from langchain.chains import ConversationalRetrievalChain, LLMChain, RetrievalQA
+from langchain.chains import ConversationalRetrievalChain, LLMChain
 from langchain.chains.chat_vector_db.prompts import CONDENSE_QUESTION_PROMPT
 from langchain.chains.question_answering import load_qa_chain
 from langchain.memory import ConversationBufferMemory
 from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain.chat_models.openai import ChatOpenAI
 
-from adapters.weaviate_adapter import WeaviateVectorStoreAdapter
+from gpt_context.adapters import WeaviateVectorStoreAdapter
 from prompt import qa_prompt
 
 

@@ -1,5 +1,6 @@
-from lib.gpt import GptServiceBase, AskResponse, AskRequest, ClearHistoryRequest, ClearHistoryResponse
 from openai_client import OpenaiClient
+
+from lib.gpt import GptServiceBase, AskResponse, AskRequest, ClearHistoryRequest, ClearHistoryResponse
 
 
 class GptService(GptServiceBase):

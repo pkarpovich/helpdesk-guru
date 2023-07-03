@@ -2,14 +2,15 @@ import os
 import asyncio
 from grpclib.server import Server
 from dotenv import load_dotenv
-from openai_client import OpenaiClient
 
-from gpt_service import GptService
+from gpt_context.openai_client import OpenaiClient
+from gpt_context.gpt_service import GptService
 
 load_dotenv()
 
 model_name = os.environ.get('OPENAI_MODEL')
 default_port = os.environ.get('PORT') or 50051
+
 
 async def main():
     if os.environ.get("OPENAI_API_KEY") is None:

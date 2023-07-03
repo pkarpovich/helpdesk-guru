@@ -4,7 +4,7 @@ from langchain.document_loaders import TextLoader, PDFMinerLoader, CSVLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.embeddings.openai import OpenAIEmbeddings
 
-from adapters.weaviate_adapter import WeaviateVectorStoreAdapter
+from gpt_context.adapters import WeaviateVectorStoreAdapter
 
 load_dotenv()
 
@@ -19,7 +19,7 @@ def main():
 
     loader = None
 
-    for root, dirs, files in os.walk("source_documents"):
+    for root, dirs, files in os.walk("../source_documents"):
         if not files:
             print(f"The directory '{root}' is empty.")
             continue

@@ -4,6 +4,7 @@ version = "0.1.0"
 description = ""
 authors = ["Pavel Karpovich <pavel.karpovich@outlook.com>"]
 readme = "README.md"
+packages = [{include = "gpt_context"}]
 
 [tool.poetry.dependencies]
 python = "^3.11"

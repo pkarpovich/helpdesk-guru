@@ -1,6 +1,6 @@
 from langchain.vectorstores.redis import Redis
 
-from adapters.vector_store_adapter import VectorStoreAdapter
+from gpt_context.adapters.vector_store_adapter import VectorStoreAdapter
 
 
 class RedisStoreAdapter(VectorStoreAdapter):

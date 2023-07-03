@@ -1,7 +1,7 @@
 from weaviate import Client as weaviateClient
 from langchain.vectorstores.weaviate import Weaviate
 
-from adapters.vector_store_adapter import VectorStoreAdapter
+from gpt_context.adapters.vector_store_adapter import VectorStoreAdapter
 
 class WeaviateVectorStoreAdapter(VectorStoreAdapter):
     def __init__(
