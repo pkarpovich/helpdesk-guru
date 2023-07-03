@@ -3,3 +3,6 @@ build_proto:
 
 init_vector_store:
 	poetry run python gpt_context/ingest.py
+
+weaviate_console:
+	open https://console.weaviate.cloud/

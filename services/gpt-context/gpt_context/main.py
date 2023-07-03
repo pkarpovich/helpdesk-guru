@@ -2,7 +2,9 @@ import os
 import asyncio
 from grpclib.server import Server
 from dotenv import load_dotenv
+from langchain.embeddings import OpenAIEmbeddings
 
+from gpt_context.adapters import WeaviateVectorStoreAdapter
 from gpt_context.openai_client import OpenaiClient
 from gpt_context.gpt_service import GptService
 
@@ -17,12 +19,13 @@ async def main():
         print("OpenAI API key not set")
         return None
 
-    redis_url = os.environ.get("REDIS_URL") or "redis://localhost:6379"
     weaviate_url = os.environ.get("WEAVIATE_URL") or "http://localhost:8080"
 
-    openai_client = OpenaiClient(model_name, redis_url, weaviate_url)
+    embedding = OpenAIEmbeddings()
+    store = WeaviateVectorStoreAdapter(weaviate_url, embedding=embedding)
+    openai_client = OpenaiClient(model_name, store)
 
-    server = Server([GptService(openai_client)])
+    server = Server([GptService(openai_client, store)])
     await server.start("0.0.0.0", default_port)
     print(f"Server started on {default_port}")
     await server.wait_closed()

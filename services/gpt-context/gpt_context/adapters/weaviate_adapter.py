@@ -3,6 +3,7 @@ from langchain.vectorstores.weaviate import Weaviate
 
 from gpt_context.adapters.vector_store_adapter import VectorStoreAdapter
 
+
 class WeaviateVectorStoreAdapter(VectorStoreAdapter):
     def __init__(
             self,
@@ -15,9 +16,9 @@ class WeaviateVectorStoreAdapter(VectorStoreAdapter):
         self.index_name = index_name
         self.text_key = text_key
 
-        client = weaviateClient(url)
+        self._client = weaviateClient(url)
         self._weaviate = Weaviate(
-            client,
+            self._client,
             index_name,
             text_key,
             by_text=False,
@@ -41,3 +42,10 @@ class WeaviateVectorStoreAdapter(VectorStoreAdapter):
             index_name=self.index_name,
             text_key=self.text_key,
         )
+
+    def truncate(self):
+        query_result = self._client.query.get(self.index_name).with_additional(["id"]).do()
+        ids = list(map(lambda x: x["_additional"]["id"], query_result["data"]["Get"]["Langchain"]))
+
+        for uuid in ids:
+            self._client.data_object.delete(uuid, self.index_name)

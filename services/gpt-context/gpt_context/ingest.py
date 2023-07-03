@@ -14,12 +14,11 @@ def main():
         print("OpenAI API key not set")
         return None
 
-    redis_url = os.environ.get("REDIS_URL") or "redis://localhost:6379"
     weaviate_url = os.environ.get("WEAVIATE_URL") or "http://localhost:8080"
 
     loader = None
 
-    for root, dirs, files in os.walk("../source_documents"):
+    for root, dirs, files in os.walk("source_documents"):
         if not files:
             print(f"The directory '{root}' is empty.")
             continue
