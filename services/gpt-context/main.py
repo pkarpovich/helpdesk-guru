@@ -9,7 +9,7 @@ from gpt_service import GptService
 load_dotenv()
 
 model_name = os.environ.get('OPENAI_MODEL')
-
+default_port = os.environ.get('PORT') or 50051
 
 async def main():
     if os.environ.get("OPENAI_API_KEY") is None:
@@ -22,7 +22,8 @@ async def main():
     openai_client = OpenaiClient(model_name, redis_url, weaviate_url)
 
     server = Server([GptService(openai_client)])
-    await server.start("0.0.0.0", 50051)
+    await server.start("0.0.0.0", default_port)
+    print(f"Server started on {default_port}")
     await server.wait_closed()
 
 
