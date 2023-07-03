@@ -1,0 +1,23 @@
+[tool.poetry]
+name = "gpt-context"
+version = "0.1.0"
+description = ""
+authors = ["Pavel Karpovich <pavel.karpovich@outlook.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+langchain = "0.0.200"
+python-dotenv = "1.0.0"
+openai = "0.27.8"
+tiktoken = "0.4.0"
+grpcio = "1.54.2"
+grpcio-tools = "1.54.2"
+betterproto = {version = "2.0.0b5", extras = ["compiler"]}
+redis = "4.5.5"
+weaviate-client = "3.20.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
