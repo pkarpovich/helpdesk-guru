@@ -7,15 +7,15 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.11"
-langchain = "0.0.200"
 python-dotenv = "1.0.0"
-openai = "0.27.8"
 tiktoken = "0.4.0"
 grpcio = "1.54.2"
 grpcio-tools = "1.54.2"
 betterproto = {version = "2.0.0b5", extras = ["compiler"]}
 redis = "4.5.5"
-weaviate-client = "3.20.1"
+langchain = "^0.0.222"
+weaviate-client = "^3.21.0"
+openai = "^0.27.8"
 
 
 [build-system]

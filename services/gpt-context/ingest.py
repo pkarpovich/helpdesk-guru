@@ -4,7 +4,6 @@ from langchain.document_loaders import TextLoader, PDFMinerLoader, CSVLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.embeddings.openai import OpenAIEmbeddings
 
-from adapters.redis_adapter import RedisStoreAdapter
 from adapters.weaviate_adapter import WeaviateVectorStoreAdapter
 
 load_dotenv()

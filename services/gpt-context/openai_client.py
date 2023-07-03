@@ -1,6 +1,5 @@
 import langchain
 
-from langchain.cache import RedisSemanticCache
 from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
 from langchain.chains import ConversationalRetrievalChain, LLMChain, RetrievalQA
 from langchain.chains.chat_vector_db.prompts import CONDENSE_QUESTION_PROMPT
@@ -16,11 +15,6 @@ from prompt import qa_prompt
 class OpenaiClient:
     def __init__(self, model_name: str, redis_url: str, weaviate_url: str):
         embedding = OpenAIEmbeddings()
-
-        langchain.llm_cache = RedisSemanticCache(
-            redis_url=redis_url,
-            embedding=embedding,
-        )
 
         callbacks = [StreamingStdOutCallbackHandler()]
 
