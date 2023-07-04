@@ -8,6 +8,8 @@ from lib.gpt import (
     ClearHistoryResponse,
     ClearIndexRequest,
     ClearIndexResponse,
+    AddGoogleDocsRequest,
+    AddGoogleDocsResponse,
 )
 
 
@@ -26,3 +28,7 @@ class GptGrpcService(GptServiceBase):
     async def clear_index(self, clear_index_request: ClearIndexRequest) -> ClearIndexResponse:
         self.gpt_controller.clear_index()
         return ClearIndexResponse()
+
+    async def add_google_docs(self, add_google_docs_request: AddGoogleDocsRequest) -> AddGoogleDocsResponse:
+        self.gpt_controller.add_google_docs(add_google_docs_request.folder_id)
+        return AddGoogleDocsResponse()

@@ -8,6 +8,7 @@ service GptService {
   rpc ask (AskRequest) returns (AskResponse) {}
   rpc clearHistory (ClearHistoryRequest) returns (ClearHistoryResponse) {}
   rpc clearIndex (ClearIndexRequest) returns (ClearIndexResponse) {}
+  rpc addGoogleDocs (AddGoogleDocsRequest) returns (AddGoogleDocsResponse) {}
 }
 
 message AskRequest {
@@ -25,3 +26,9 @@ message ClearHistoryResponse {}
 message ClearIndexRequest {}
 
 message ClearIndexResponse {}
+
+message AddGoogleDocsRequest {
+  string folderId = 1;
+}
+
+message AddGoogleDocsResponse {}
