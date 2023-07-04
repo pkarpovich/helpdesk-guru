@@ -13,7 +13,7 @@ class VectorStoreAdapter(ABC):
         pass
 
     @abstractmethod
-    def from_documents(self, documents, embeddings, **kwargs):
+    def from_documents(self, documents, **kwargs):
         pass
 
     @abstractmethod

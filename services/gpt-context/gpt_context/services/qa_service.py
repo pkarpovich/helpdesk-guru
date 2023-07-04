@@ -1,24 +1,23 @@
-from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
 from langchain.chains import ConversationalRetrievalChain, LLMChain
 from langchain.chains.chat_vector_db.prompts import CONDENSE_QUESTION_PROMPT
+from langchain.callbacks import StreamingStdOutCallbackHandler
 from langchain.chains.question_answering import load_qa_chain
+from langchain.chat_models import ChatOpenAI
 from langchain.memory import ConversationBufferMemory
-from langchain.chat_models.openai import ChatOpenAI
 
 from gpt_context.adapters.vector_store_adapter import VectorStoreAdapter
-from prompt import qa_prompt
+from gpt_context.services.prompts.qa_prompt import qa_prompt
+
+callbacks = [StreamingStdOutCallbackHandler()]
 
 
-class OpenaiClient:
+class QAService:
     def __init__(self, model_name: str, store: VectorStoreAdapter):
-        callbacks = [StreamingStdOutCallbackHandler()]
-
         self.memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True)
+        llm = ChatOpenAI(model_name=model_name, callbacks=callbacks, verbose=True, temperature=0.7)
 
-        model = ChatOpenAI(model_name=model_name, callbacks=callbacks, verbose=True, temperature=0.7)
-
-        question_generator = LLMChain(llm=model, prompt=CONDENSE_QUESTION_PROMPT)
-        combine_docs_chain = load_qa_chain(model, chain_type="stuff", prompt=qa_prompt)
+        question_generator = LLMChain(llm=llm, prompt=CONDENSE_QUESTION_PROMPT)
+        combine_docs_chain = load_qa_chain(llm, chain_type="stuff", prompt=qa_prompt)
 
         self.qa = ConversationalRetrievalChain(
             memory=self.memory,
@@ -32,5 +31,5 @@ class OpenaiClient:
 
         return res["answer"]
 
-    def clear_history(self):
+    def clear_history(self) -> None:
         self.memory.clear()

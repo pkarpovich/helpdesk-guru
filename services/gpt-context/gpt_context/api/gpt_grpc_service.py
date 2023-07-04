@@ -1,6 +1,4 @@
-from openai_client import OpenaiClient
-
-from gpt_context.adapters.vector_store_adapter import VectorStoreAdapter
+from gpt_context.controllers.gpt_controller import GptController
 
 from lib.gpt import (
     GptServiceBase,
@@ -13,18 +11,18 @@ from lib.gpt import (
 )
 
 
-class GptService(GptServiceBase):
-    def __init__(self, openai: OpenaiClient, store: VectorStoreAdapter):
-        self.openai = openai
-        self.store = store
+class GptGrpcService(GptServiceBase):
+    def __init__(self, gpt_controller: GptController):
+        self.gpt_controller = gpt_controller
 
     async def ask(self, ask_request: AskRequest) -> AskResponse:
-        return AskResponse(answer=self.openai.ask(ask_request.query))
+        answer = self.gpt_controller.ask(ask_request.query)
+        return AskResponse(answer=answer)
 
     async def clear_history(self, clear_history_request: ClearHistoryRequest) -> ClearHistoryResponse:
-        self.openai.clear_history()
+        self.gpt_controller.clear_history()
         return ClearHistoryResponse()
 
     async def clear_index(self, clear_index_request: ClearIndexRequest) -> ClearIndexResponse:
-        self.store.truncate()
+        self.gpt_controller.clear_index()
         return ClearIndexResponse()

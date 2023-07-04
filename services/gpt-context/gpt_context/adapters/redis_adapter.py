@@ -12,6 +12,7 @@ class RedisStoreAdapter(VectorStoreAdapter):
     ):
         self.url = url
         self.index_name = index_name
+        self.embedding = embedding
         self.vector_db = Redis.from_existing_index(redis_url=url, index_name=index_name, embedding=embedding)
 
     @property
@@ -22,5 +23,5 @@ class RedisStoreAdapter(VectorStoreAdapter):
     def retriever(self):
         return self.vector_db.as_retriever()
 
-    def from_documents(self, documents, embeddings, **kwargs):
-        return self.vector_db.from_documents(documents, embeddings, **kwargs)
+    def from_documents(self, documents, **kwargs):
+        return self.vector_db.from_documents(documents, self.embedding, **kwargs)

@@ -15,6 +15,7 @@ class WeaviateVectorStoreAdapter(VectorStoreAdapter):
         self.url = url
         self.index_name = index_name
         self.text_key = text_key
+        self.embedding = embedding
 
         self._client = weaviateClient(url)
         self._weaviate = Weaviate(
@@ -34,10 +35,10 @@ class WeaviateVectorStoreAdapter(VectorStoreAdapter):
     def retriever(self):
         return self._weaviate.as_retriever()
 
-    def from_documents(self, documents, embeddings, **kwargs):
+    def from_documents(self, documents, **kwargs):
         self._weaviate.from_documents(
             documents,
-            embeddings,
+            self.embedding,
             weaviate_url=self.url,
             index_name=self.index_name,
             text_key=self.text_key,
