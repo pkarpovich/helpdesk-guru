@@ -14,7 +14,7 @@ callbacks = [StreamingStdOutCallbackHandler()]
 class QAService:
     def __init__(self, model_name: str, store: VectorStoreAdapter):
         self.memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True)
-        llm = ChatOpenAI(model_name=model_name, callbacks=callbacks, verbose=True, temperature=0.7)
+        llm = ChatOpenAI(model_name=model_name, callbacks=callbacks, verbose=True, temperature=0)
 
         question_generator = LLMChain(llm=llm, prompt=CONDENSE_QUESTION_PROMPT)
         combine_docs_chain = load_qa_chain(llm, chain_type="stuff", prompt=qa_prompt)

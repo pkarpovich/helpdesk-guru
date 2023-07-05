@@ -60,7 +60,7 @@ class ContextService:
         return loader
 
     def _add_documents_to_store(self, documents: list[Document]) -> None:
-        text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
+        text_splitter = RecursiveCharacterTextSplitter(chunk_size=200, chunk_overlap=200, separators=["Question"])
         texts = text_splitter.split_documents(documents)
 
         self.store.from_documents(texts)
