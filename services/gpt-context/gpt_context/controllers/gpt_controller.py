@@ -7,11 +7,11 @@ class GptController:
         self.qa_service = qa_service
         self.context_service = context_service
 
-    def ask(self, query: str) -> str:
-        return self.qa_service.ask(query)
+    def ask(self, query: str, conversation_id: str) -> str:
+        return self.qa_service.ask(query, conversation_id)
 
-    def clear_history(self) -> None:
-        return self.qa_service.clear_history()
+    def clear_history(self, conversation_id: str) -> None:
+        return self.qa_service.clear_history(conversation_id)
 
     def clear_index(self) -> None:
         return self.context_service.clear_index()

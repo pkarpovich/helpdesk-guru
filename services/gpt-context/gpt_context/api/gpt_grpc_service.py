@@ -18,11 +18,11 @@ class GptGrpcService(GptServiceBase):
         self.gpt_controller = gpt_controller
 
     async def ask(self, ask_request: AskRequest) -> AskResponse:
-        answer = self.gpt_controller.ask(ask_request.query)
+        answer = self.gpt_controller.ask(ask_request.query, ask_request.conversation_id)
         return AskResponse(answer=answer)
 
     async def clear_history(self, clear_history_request: ClearHistoryRequest) -> ClearHistoryResponse:
-        self.gpt_controller.clear_history()
+        self.gpt_controller.clear_history(clear_history_request.conversation_id)
         return ClearHistoryResponse()
 
     async def clear_index(self, clear_index_request: ClearIndexRequest) -> ClearIndexResponse:

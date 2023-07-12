@@ -11,6 +11,9 @@ services:
       OPENAI_MODEL: ${OPENAI_MODEL}
       REDIS_URL: ${REDIS_URL}
       WEAVIATE_URL: ${WEAVIATE_URL}
+      MONGODB_URI: ${MONGODB_URI}
+      MONGODB_USERNAME: ${MONGODB_USERNAME}
+      MONGODB_PASSWORD: ${MONGODB_PASSWORD}
     volumes:
       - ./services/gpt-context/source_documents:/app/services/gpt-context/source_documents
     depends_on:
@@ -53,6 +56,20 @@ services:
     volumes:
       - weaviate-data:/var/lib/weaviate
 
+  conversation_store:
+    image: mongo:6.0.7
+    expose:
+      - 27017
+    ports:
+      - 27017:27017
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGODB_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGODB_PASSWORD}
+    volumes:
+      - conversation-store-data:/data/db
+
 volumes:
+  conversation-store-data:
   redis-cache-data:
   weaviate-data:

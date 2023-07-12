@@ -11,6 +11,7 @@ class WeaviateVectorStoreAdapter(VectorStoreAdapter):
             index_name="Langchain",
             text_key="text",
             embedding=None,
+            attributes=["source"]
     ):
         self.url = url
         self.index_name = index_name
@@ -24,7 +25,7 @@ class WeaviateVectorStoreAdapter(VectorStoreAdapter):
             text_key,
             by_text=False,
             embedding=embedding,
-            attributes=["source"]
+            attributes=attributes
         )
 
     @property
@@ -46,7 +47,7 @@ class WeaviateVectorStoreAdapter(VectorStoreAdapter):
 
     def truncate(self):
         query_result = self._client.query.get(self.index_name).with_additional(["id"]).do()
-        ids = list(map(lambda x: x["_additional"]["id"], query_result["data"]["Get"]["Langchain"]))
+        ids = list(map(lambda x: x["_additional"]["id"], query_result["data"]["Get"][self.index_name]))
 
         for uuid in ids:
             self._client.data_object.delete(uuid, self.index_name)

@@ -13,13 +13,16 @@ service GptService {
 
 message AskRequest {
   string query = 1;
+  string conversationId = 2;
 }
 
 message AskResponse {
   string answer = 1;
 }
 
-message ClearHistoryRequest {}
+message ClearHistoryRequest {
+  string conversationId = 1;
+}
 
 message ClearHistoryResponse {}
 
