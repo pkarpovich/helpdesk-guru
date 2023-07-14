@@ -6,9 +6,10 @@ from langchain.chat_models import ChatOpenAI
 from langchain.memory import ConversationBufferMemory, ChatMessageHistory
 from langchain.schema import messages_to_dict, messages_from_dict
 
-from gpt_context.adapters.vector_store_adapter import VectorStoreAdapter
+from gpt_context.adapters import VectorStoreAdapter
+from gpt_context.exceptions import BusinessLogicException, ErrorCode, ErrorMessage
 from gpt_context.services.prompts.qa_prompt import qa_prompt
-from gpt_context.stores.conversation_store import ConversationStore
+from gpt_context.stores import ConversationStore
 
 callbacks = [StreamingStdOutCallbackHandler()]
 
@@ -17,7 +18,9 @@ class QAService:
     def __init__(self, model_name: str, store: VectorStoreAdapter, conversation_store: ConversationStore):
         self.conversation_store = conversation_store
         self.history = ChatMessageHistory()
-        self.memory = ConversationBufferMemory(chat_memory=self.history, memory_key="chat_history", return_messages=True)
+        self.memory = ConversationBufferMemory(chat_memory=self.history, memory_key="chat_history",
+                                               return_messages=True)
+        self.store = store
 
         llm = ChatOpenAI(model_name=model_name, callbacks=callbacks, temperature=0)
 
@@ -32,7 +35,13 @@ class QAService:
             verbose=True,
         )
 
-    def ask(self, query: str, conversation_id: str) -> str:
+    def ask(self, query: str, conversation_id: str, context_name: str) -> str:
+        if not self.store.context_exists(context_name):
+            raise BusinessLogicException(
+                ErrorCode.NOT_FOUND,
+                ErrorMessage.CONTEXT_NOT_FOUND.format(context_name=context_name)
+            )
+
         self._load_messages_if_needed(conversation_id)
 
         res = self.qa({"question": query})

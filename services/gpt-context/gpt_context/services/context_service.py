@@ -5,7 +5,7 @@ from langchain.document_loaders.base import BaseLoader
 from langchain.schema import Document
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 
-from gpt_context.adapters.vector_store_adapter import VectorStoreAdapter
+from gpt_context.adapters import VectorStoreAdapter
 
 
 class ContextService:
@@ -28,10 +28,10 @@ class ContextService:
                 documents = loader.load()
                 self._add_documents_to_store(documents)
 
-    def clear_index(self) -> None:
-        self.store.truncate()
+    def clear_index(self, context_name) -> None:
+        self.store.truncate(context_name)
 
-    def add_google_docs(self, folder_id: str) -> None:
+    def add_google_docs(self, folder_id: str, context_name: str) -> None:
         credentials_path = os.path.join(os.getcwd(), "..", ".credentials/credentials.json")
         token_path = os.path.join(os.getcwd(), "..", ".credentials/token.json")
 
@@ -42,7 +42,7 @@ class ContextService:
             recursive=False,
         )
         docs = loader.load()
-        self._add_documents_to_store(docs)
+        self._add_documents_to_store(docs, context_name)
 
     @staticmethod
     def _get_file_loader(root: str, file: str) -> BaseLoader:
@@ -59,9 +59,8 @@ class ContextService:
 
         return loader
 
-    def _add_documents_to_store(self, documents: list[Document]) -> None:
+    def _add_documents_to_store(self, documents: list[Document], context_name: str) -> None:
         text_splitter = RecursiveCharacterTextSplitter(chunk_size=200, chunk_overlap=200, separators=["Question"])
         texts = text_splitter.split_documents(documents)
 
-        self.store.from_documents(texts)
-
+        self.store.from_documents(texts, index_name=context_name)
