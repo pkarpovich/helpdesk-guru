@@ -1,11 +1,10 @@
 from instagrapi import Client
 import time
 
-
 # define the InstagramService class
 class InstagramService:
     # set up the client by logging in with the provided credentials
-    def __init__(self, username, password, proxy=None):
+    def __init__(self, username: str, password: str, proxy: str = None) -> None:
         if proxy:
             self.client = Client(proxy=proxy)
         else:
@@ -13,13 +12,13 @@ class InstagramService:
         self.client.login(username, password)
 
     # send a direct message to a specified recipient
-    def send_direct_message(self, recipient_username, message):
+    def send_direct_message(self, recipient_username: str, message: str) -> None:
         recipient_id = self.client.user_id_from_username(recipient_username)
         recipient_id = int(recipient_id)
         self.client.direct_send(message, [recipient_id])
 
     # read all direct messages for the logged in user
-    def read_direct_messages(self):
+    def read_direct_messages(self) -> None:
         threads = self.client.direct_threads()
         for thread in threads:
             messages = thread.messages
@@ -29,13 +28,11 @@ class InstagramService:
                     print(message.text)
 
     # continuously read direct messages at a specified interval of time
-    def start_reading_messages(self, interval_seconds=60):
+    def start_reading_messages(self, interval_seconds: int = 60) -> None:
         while True:
             # call the read_direct_messages method to read messages
             self.read_direct_messages()
             time.sleep(interval_seconds)
-
-
 # define the necessary variables
 username = "username"
 password = "password"
