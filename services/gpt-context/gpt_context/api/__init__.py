@@ -1,1 +1,2 @@
 from .gpt_grpc_service import GptGrpcService
+from .health_check_grpc_service import HealthCheckGrpcService

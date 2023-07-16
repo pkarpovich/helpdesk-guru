@@ -1,12 +1,13 @@
-import os
 import asyncio
-from grpclib.server import Server
+import os
+
 from dotenv import load_dotenv
+from grpclib.server import Server
 from langchain.embeddings import OpenAIEmbeddings
 
 from gpt_context.adapters import WeaviateVectorStoreAdapter
+from gpt_context.api import GptGrpcService, HealthCheckGrpcService
 from gpt_context.controllers import GptController
-from gpt_context.api.gpt_grpc_service import GptGrpcService
 from gpt_context.services import ContextService, QAService
 from gpt_context.stores.conversation_store import ConversationStore
 
@@ -34,8 +35,9 @@ async def main():
     gpt_controller = GptController(qa_service, context_service)
 
     gpt_grpc_service = GptGrpcService(gpt_controller)
+    health_check_service = HealthCheckGrpcService(context_service)
 
-    server = Server([gpt_grpc_service])
+    server = Server([gpt_grpc_service, health_check_service])
     await server.start("0.0.0.0", default_port)
     print(f"Server started on {default_port}")
     await server.wait_closed()

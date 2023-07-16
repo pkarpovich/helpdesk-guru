@@ -32,17 +32,16 @@ class ContextService:
         self.store.truncate(context_name)
 
     def add_google_docs(self, folder_id: str, context_name: str) -> None:
-        credentials_path = os.path.join(os.getcwd(), "..", ".credentials/credentials.json")
-        token_path = os.path.join(os.getcwd(), "..", ".credentials/token.json")
-
-        loader = GoogleDriveLoader(
-            credentials_path=credentials_path,
-            token_path=token_path,
-            folder_id=folder_id,
-            recursive=False,
-        )
+        loader = self._prepare_google_drive_loader(folder_id)
         docs = loader.load()
         self._add_documents_to_store(docs, context_name)
+
+    def check_google_docs_connectivity(self, folder_id: str) -> bool:
+        loader = self._prepare_google_drive_loader(folder_id)
+        docs = loader.load()
+
+        return len(docs) > 0
+
 
     @staticmethod
     def _get_file_loader(root: str, file: str) -> BaseLoader:
@@ -64,3 +63,14 @@ class ContextService:
         texts = text_splitter.split_documents(documents)
 
         self.store.from_documents(texts, index_name=context_name)
+
+    def _prepare_google_drive_loader(self, folder_id: str) -> GoogleDriveLoader:
+        credentials_path = os.path.join(os.getcwd(), "..", ".credentials/credentials.json")
+        token_path = os.path.join(os.getcwd(), "..", ".credentials/token.json")
+
+        return GoogleDriveLoader(
+            credentials_path=credentials_path,
+            token_path=token_path,
+            folder_id=folder_id,
+            recursive=False,
+        )

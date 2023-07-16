@@ -30,16 +30,6 @@ services:
     depends_on:
       - gpt-service
 
-  redis-store:
-    image: redis/redis-stack:latest
-    expose:
-      - 6379
-    ports:
-      - 6379:6379
-    restart: unless-stopped
-    volumes:
-      - redis-cache-data:/data
-
   weaviate:
     image: semitechnologies/weaviate:1.19.6
     expose:
@@ -69,7 +59,17 @@ services:
     volumes:
       - conversation-store-data:/data/db
 
+  healthcheck:
+    image: louislam/uptime-kuma:1
+    ports:
+      - 3001:3001
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - healthcheck-data:/app/data
+
 volumes:
   conversation-store-data:
   redis-cache-data:
   weaviate-data:
+  healthcheck-data:
