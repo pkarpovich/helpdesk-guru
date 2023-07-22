@@ -10,6 +10,8 @@ packages = [{include = "instagram_service"}]
 python = "^3.11.4"
 instagrapi = "^1.17.13"
 pillow = "^10.0.0"
+datetime = "^5.2"
+asyncio = "^3.4.3"
 
 [build-system]
 requires = ["poetry-core"]
