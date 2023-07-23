@@ -27,7 +27,7 @@ class InstagramService:
                 first_message_timestamp = datetime.utcnow()
             for message in messages:
                 if latest_timestamp is None or message.timestamp > latest_timestamp:
-                    if message.text:
+                    if message.text and message.user_id != self.client.user_id :
                         print(message.text)
                     self.latest_message_timestamps[thread_id] = message.timestamp
             if latest_timestamp is None:
