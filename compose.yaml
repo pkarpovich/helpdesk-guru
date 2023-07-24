@@ -6,18 +6,21 @@ services:
     restart: unless-stopped
     expose:
       - 50051
+    ports:
+      - 50051:50051
     environment:
       OPENAI_API_KEY: ${OPENAI_API_KEY}
       OPENAI_MODEL: ${OPENAI_MODEL}
-      REDIS_URL: ${REDIS_URL}
       WEAVIATE_URL: ${WEAVIATE_URL}
       MONGODB_URI: ${MONGODB_URI}
       MONGODB_USERNAME: ${MONGODB_USERNAME}
       MONGODB_PASSWORD: ${MONGODB_PASSWORD}
     volumes:
-      - ./services/gpt-context/source_documents:/app/services/gpt-context/source_documents
+      - ./services/gpt-context/source_documents:/app/source_documents
+      - ./services/gpt-context/.credentials:/app/.credentials
     depends_on:
-      - redis-store
+      - weaviate
+      - conversation-store
 
   telegram-bot:
     build:
@@ -46,7 +49,7 @@ services:
     volumes:
       - weaviate-data:/var/lib/weaviate
 
-  conversation_store:
+  conversation-store:
     image: mongo:6.0.7
     expose:
       - 27017

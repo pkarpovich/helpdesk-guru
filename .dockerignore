@@ -30,10 +30,10 @@
 **/obj
 **/secrets.dev.yaml
 **/values.dev.yaml
+**/.idea
+**/db
+**/lib
+**/source_documents
+**/.credentials
 LICENSE
 README.md
-
-db
-lib
-source_documents
-.credentials
