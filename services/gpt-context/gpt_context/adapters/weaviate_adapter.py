@@ -1,26 +1,31 @@
-from weaviate import Client as weaviateClient
+from typing import TYPE_CHECKING
+
 from langchain.vectorstores.weaviate import Weaviate
+from weaviate import Client as weaviateClient
 
 from gpt_context.adapters.vector_store_adapter import VectorStoreAdapter
 from gpt_context.exceptions.business_logic_exception import BusinessLogicException
 from gpt_context.exceptions.errors import ErrorCode, ErrorMessage
 
+if TYPE_CHECKING:
+    from gpt_context.services import AppConfig
+
 
 class WeaviateVectorStoreAdapter(VectorStoreAdapter):
     def __init__(
             self,
-            url="http://localhost:8080",
+            config: 'AppConfig',
             index_name="Langchain",
             text_key="text",
             embedding=None,
             attributes=["source"]
     ):
-        self.url = url
+        self.url = config.WEAVIATE_URL
         self.index_name = index_name
         self.text_key = text_key
         self.embedding = embedding
 
-        self._client = weaviateClient(url)
+        self._client = weaviateClient(self.url)
         self._weaviate = Weaviate(
             self._client,
             index_name,

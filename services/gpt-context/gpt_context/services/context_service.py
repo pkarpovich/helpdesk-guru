@@ -1,4 +1,5 @@
 import os
+from typing import TYPE_CHECKING
 
 from langchain.document_loaders import TextLoader, PDFMinerLoader, CSVLoader, GoogleDriveLoader
 from langchain.document_loaders.base import BaseLoader
@@ -7,10 +8,14 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 
 from gpt_context.adapters import VectorStoreAdapter
 
+if TYPE_CHECKING:
+    from gpt_context.services import AppConfig
+
 
 class ContextService:
-    def __init__(self, store: VectorStoreAdapter):
+    def __init__(self, config: 'AppConfig', store: VectorStoreAdapter):
         self.store = store
+        self.config = config
 
     def init(self) -> None:
         for root, _, files in os.walk("source_documents"):
@@ -42,7 +47,6 @@ class ContextService:
 
         return len(docs) > 0
 
-
     @staticmethod
     def _get_file_loader(root: str, file: str) -> BaseLoader:
         ext = os.path.splitext(file)[-1].lower()
@@ -65,12 +69,9 @@ class ContextService:
         self.store.from_documents(texts, index_name=context_name)
 
     def _prepare_google_drive_loader(self, folder_id: str) -> GoogleDriveLoader:
-        credentials_path = os.path.join(os.getcwd(), "..", ".credentials/credentials.json")
-        token_path = os.path.join(os.getcwd(), "..", ".credentials/token.json")
-
         return GoogleDriveLoader(
-            credentials_path=credentials_path,
-            token_path=token_path,
+            credentials_path=self.config.GOOGLE_APPLICATION_CREDENTIALS,
+            token_path=self.config.GOOGLE_APPLICATION_TOKEN,
             folder_id=folder_id,
             recursive=False,
         )
