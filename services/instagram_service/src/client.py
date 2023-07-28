@@ -12,5 +12,5 @@ class client_grpc:
     request = gpt.AskRequest(contextName=self.contextName, conversationId=self.conversationId, query=query)
     answer = stub.ask(request)
     response = answer.answer
-    print(response)
+    return response 
     channel.close()
