@@ -24,16 +24,8 @@ class QAService:
 
         llm = ChatOpenAI(model_name=model_name, callbacks=callbacks, temperature=0)
 
-        question_generator = LLMChain(llm=llm, prompt=CONDENSE_QUESTION_PROMPT, verbose=True)
-        combine_docs_chain = load_qa_chain(llm, chain_type="stuff", prompt=qa_prompt, verbose=True)
-
-        self.qa = ConversationalRetrievalChain(
-            memory=self.memory,
-            retriever=store.retriever,
-            question_generator=question_generator,
-            combine_docs_chain=combine_docs_chain,
-            verbose=True,
-        )
+        self.question_generator = LLMChain(llm=llm, prompt=CONDENSE_QUESTION_PROMPT, verbose=True)
+        self.combine_docs_chain = load_qa_chain(llm, chain_type="stuff", prompt=qa_prompt, verbose=True)
 
     def ask(self, query: str, conversation_id: str, context_name: str) -> str:
         if not self.store.context_exists(context_name):
@@ -44,7 +36,15 @@ class QAService:
 
         self._load_messages_if_needed(conversation_id)
 
-        res = self.qa({"question": query})
+        qa = ConversationalRetrievalChain(
+            memory=self.memory,
+            retriever=self.store.get_retriever(context_name),
+            question_generator=self.question_generator,
+            combine_docs_chain=self.combine_docs_chain,
+            verbose=True,
+        )
+
+        res = qa({"question": query})
         self.conversation_store.save_or_update(
             conversation_id,
             messages_to_dict(self.memory.chat_memory.messages)

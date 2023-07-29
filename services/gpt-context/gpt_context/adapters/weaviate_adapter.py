@@ -15,42 +15,26 @@ class WeaviateVectorStoreAdapter(VectorStoreAdapter):
     def __init__(
             self,
             config: 'AppConfig',
-            index_name="Langchain",
             text_key="text",
             embedding=None,
             attributes=["source"]
     ):
         self.url = config.WEAVIATE_URL
-        self.index_name = index_name
         self.text_key = text_key
         self.embedding = embedding
+        self.attributes = attributes
 
         self._client = weaviateClient(self.url)
-        self._weaviate = Weaviate(
-            self._client,
-            index_name,
-            text_key,
-            by_text=False,
-            embedding=embedding,
-            attributes=attributes
-        )
 
-    @property
-    def db(self):
-        return self._weaviate
+    def get_retriever(self, index_name: str):
+        weaviate = self._init_index(index_name)
 
-    @property
-    def retriever(self):
-        return self._weaviate.as_retriever()
+        return weaviate.as_retriever()
 
     def from_documents(self, documents, index_name, **kwargs):
-        self._weaviate.from_documents(
-            documents,
-            self.embedding,
-            weaviate_url=self.url,
-            index_name=index_name,
-            text_key=self.text_key,
-        )
+        weaviate = self._init_index(index_name)
+
+        weaviate.from_documents(documents, self.embedding, index_name=index_name)
 
     def truncate(self, context_name: str):
         if not self.context_exists(context_name):
@@ -67,3 +51,13 @@ class WeaviateVectorStoreAdapter(VectorStoreAdapter):
 
     def context_exists(self, context_name: str) -> bool:
         return self._client.schema.exists(context_name)
+
+    def _init_index(self, index_name: str) -> Weaviate:
+        return Weaviate(
+            self._client,
+            index_name,
+            self.text_key,
+            by_text=False,
+            embedding=self.embedding,
+            attributes=self.attributes
+        )

@@ -20,12 +20,15 @@ class GptGrpcService(GptServiceBase):
         self.gpt_controller = gpt_controller
 
     async def ask(self, ask_request: AskRequest) -> AskResponse:
-        answer = self.gpt_controller.ask(
-            ask_request.query,
-            ask_request.conversation_id,
-            ask_request.context_name
-        )
-        return AskResponse(answer=answer)
+        try:
+            answer = self.gpt_controller.ask(
+                ask_request.query,
+                ask_request.conversation_id,
+                ask_request.context_name
+            )
+            return AskResponse(answer=answer)
+        except BusinessLogicException as e:
+            return AskResponse(error=ErrorInfo(code=e.code, message=e.message))
 
     async def clear_history(self, clear_history_request: ClearHistoryRequest) -> ClearHistoryResponse:
         self.gpt_controller.clear_history(clear_history_request.conversation_id)

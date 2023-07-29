@@ -2,14 +2,8 @@ from abc import ABC, abstractmethod
 
 
 class VectorStoreAdapter(ABC):
-    @property
     @abstractmethod
-    def db(self):
-        pass
-
-    @property
-    @abstractmethod
-    def retriever(self):
+    def get_retriever(self, index_name: str):
         pass
 
     @abstractmethod
