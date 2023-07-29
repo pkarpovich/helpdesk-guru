@@ -98,7 +98,7 @@ func startTelegramBot() {
 
 			msg = tgbotapi.NewMessage(update.Message.Chat.ID, BotClearMessage)
 		default:
-			answer, err := askGpt(update.Message.Text)
+			answer, err := askGpt(update.Message.Text, update.Message.From.UserName)
 			if err != nil {
 				log.Printf("fail to ask gpt: %v", err)
 			}

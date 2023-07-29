@@ -6,6 +6,7 @@ import (
 	pb "github.com/pkarpovich/helpdesk-guru/services/telegram-bot/lib"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
+	"os"
 )
 
 var conn *grpc.ClientConn
@@ -22,9 +23,17 @@ func initGptServiceConnection() error {
 	return nil
 }
 
-func askGpt(query string) (string, error) {
+func askGpt(query, conversationId string) (string, error) {
+	contextName := os.Getenv("CONTEXT_NAME")
+
 	client := pb.NewGptServiceClient(conn)
-	resp, err := client.Ask(context.Background(), &pb.AskRequest{Query: query})
+	request := &pb.AskRequest{
+		ConversationId: conversationId,
+		ContextName:    contextName,
+		Query:          query,
+	}
+
+	resp, err := client.Ask(context.Background(), request)
 	if err != nil {
 		return "", err
 	}

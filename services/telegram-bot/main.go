@@ -1,9 +1,17 @@
 package main
 
-import "log"
+import (
+	"github.com/joho/godotenv"
+	"log"
+)
 
 func main() {
-	err := initGptServiceConnection()
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+
+	err = initGptServiceConnection()
 	if err != nil {
 		log.Fatalf("fail to connect to gpt service: %v", err)
 	}
