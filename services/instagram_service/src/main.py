@@ -8,11 +8,16 @@ class InstagramService:
         except Exception as e:
             print(f"Error while setting up Instagram client: {e}")
         self.latest_message_timestamps = {}
-    def send_direct_message(self, recipient_username: str, message: str) -> None:
-        recipient_id = self.client.user_id_from_username(recipient_username)
-        recipient_id = int(recipient_id)
-        self.client.direct_send(message, [recipient_id])
-    def read_direct_messages(self) -> None:
+
+    def send_direct_message(self, message: str, sender_username: str) -> None:
+        sender_id = self.client.user_id_from_username(sender_username)
+        sender_id = int(sender_id)
+        recipients = [sender_id]
+        thread_id = self.client.direct_thread(*recipients).id
+        self.client.direct_send(message, thread_id)
+
+    def read_direct_messages(self) -> list:
+        messages = []
         threads = self.client.direct_threads()
         for thread in threads:
             thread_id = thread.id
@@ -27,8 +32,12 @@ class InstagramService:
                 first_message_timestamp = datetime.utcnow()
             for message in messages:
                 if latest_timestamp is None or message.timestamp > latest_timestamp:
-                    if message.text and message.user_id != self.client.user_id :
-                        print(message.text)
+                    if message.text and message.user_id != self.client.user_id and message.thread_id == thread_id:
+                        # Add the message to the list if it is a direct message
+                        messages.append(message.text.strip())
                     self.latest_message_timestamps[thread_id] = message.timestamp
             if latest_timestamp is None:
                 self.latest_message_timestamps[thread_id] = first_message_timestamp
+
+        return messages
+
