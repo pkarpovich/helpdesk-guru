@@ -4,10 +4,8 @@ services:
       context: .
       dockerfile: services/gpt-context/Dockerfile
     restart: unless-stopped
-    expose:
-      - 50051
-    ports:
-      - 50051:50051
+    # google drive loader picks a random port for OAuth callback
+    network_mode: host
     environment:
       OPENAI_API_KEY: ${OPENAI_API_KEY}
       OPENAI_MODEL: ${OPENAI_MODEL}
