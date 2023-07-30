@@ -30,8 +30,10 @@ services:
       dockerfile: services/telegram-bot/Dockerfile
     restart: unless-stopped
     environment:
-      GPT_SERVICE_ADDRESS: gpt-service:50051
       TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN}
+      GPT_SERVICE_ADDRESS: gpt-service:50051
+      CONTEXT_NAME: default
+      APP_ENV: production
     depends_on:
       - gpt-service
 

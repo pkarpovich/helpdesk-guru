@@ -1,17 +1,24 @@
 ARG GO_VERSION=1.20
 
-FROM onosproject/protoc-go:v1.3.0 AS proto
+FROM golang:${GO_VERSION} AS base
 
-WORKDIR /src
+FROM base AS proto
+
+WORKDIR /app
 
 COPY ./protos ./protos
-COPY ./Makefile ./Makefile
+COPY ./services/telegram-bot/Makefile ./Makefile
+
+RUN apt update \
+    && apt install -y protobuf-compiler \
+    && go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest \
+    && go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
 
 RUN make build_proto
 
 
-FROM golang:${GO_VERSION} AS build
-WORKDIR /src
+FROM base AS build
+WORKDIR /app
 
 RUN --mount=type=cache,target=/go/pkg/mod/ \
     --mount=type=bind,source=/services/telegram-bot/go.sum,target=go.sum \
@@ -19,7 +26,7 @@ RUN --mount=type=cache,target=/go/pkg/mod/ \
     go mod download -x
 
 COPY ./services/telegram-bot .
-COPY --from=proto src/services/telegram-bot/lib ./lib
+COPY --from=proto app/services/telegram-bot/lib ./lib
 
 RUN CGO_ENABLED=0 go build -o /bin/bot .
 
