@@ -2,12 +2,12 @@ import grpc
 import gpt_pb2 as gpt
 import gpt_pb2_grpc as gpt_grpc
 class client_grpc:
-    def __init__(self, contextName, conversationId, target) -> None:
+    def __init__(self, contextName: str, conversationId: str, target: str) -> None:
         self.target = target
         self.contextName = contextName
         self.conversationId = conversationId
 
-    def run(self, query):
+    def run(self, query: str) -> str:
         if not isinstance(query, str):
             query = str(query)
 
