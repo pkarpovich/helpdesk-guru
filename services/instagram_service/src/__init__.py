@@ -1,2 +1,2 @@
-from .main import InstagramService
-from .main import client_grpc
+from .instagram import InstagramService
+from .client import client_grpc
