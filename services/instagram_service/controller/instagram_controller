@@ -1,5 +1,5 @@
 from src.client import client_grpc
-from src.main import InstagramService
+from src.instagram import InstagramService
 import asyncio
 
 
