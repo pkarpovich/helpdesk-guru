@@ -17,7 +17,7 @@ class instagram_Contoller:
     def send_direct_messages(self, message: str, sender_username: str) -> None:
         return self.instagram_service.send_direct_message(message, sender_username)
 
-    async def start(self, interval_seconds=60):
+    async def start(self, interval_seconds=60) -> None:
         while True:
             direct_messages = self.read_direct_messages()
             if direct_messages:
