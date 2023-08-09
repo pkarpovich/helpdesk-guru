@@ -14,7 +14,6 @@ RUN make build_proto
 
 FROM python:${PYTHON_VERSION}-slim as base
 
-# Set environment variables
 ENV \
     PIP_DISABLE_PIP_VERSION_CHECK=1 \
     PIP_NO_CACHE_DIR=1 \
@@ -27,67 +26,48 @@ ENV \
     PYTHONWARNINGS="ignore::DeprecationWarning"
 
 RUN set -ex \
-    # Create a non-root user
     && addgroup --system --gid 1001 appgroup \
     && adduser --system --uid 1001 --gid 1001 --no-create-home appuser \
-    # Upgrade the package index and install security upgrades
     && apt-get update \
     && apt-get upgrade -y \
-    # Install dependencies \
     && pip install --upgrade pip \
     && pip install poetry==${POETRY_VERSION} \
-    # Clean up
     && apt-get autoremove -y \
     && apt-get clean -y \
     && rm -rf /var/lib/apt/lists/*
 
 FROM base as builder
 
-# Set the working directory
 WORKDIR /app
 
-# Copy poetry files and install dependencies
 COPY ./pyproject.toml ./poetry.lock ./
 RUN poetry config virtualenvs.create false
 RUN poetry install --no-dev --no-root
 
-# Copy the application files
 COPY . .
 
-# Export runtime dependencies to requirements.txt
 RUN poetry export -f requirements.txt --output requirements.txt
 
-# Copy the Instagram service files
 COPY services/instagram_service /app/services/instagram_service
 
-# Install dependencies for the Instagram service
 RUN pip install -r /app/requirements.txt
 
 FROM base as runtime
 
-# Set the environment variables
 ENV PYTHONPATH="/app:${PYTHONPATH}"
 
-# Set the working directory
 WORKDIR /app
 
-# Copy the protos library
 COPY --from=proto-builder /app/lib ./lib
 
-# Copy the requirements.txt file
 COPY --from=builder /app/requirements.txt ./
 
-# Copy the application files
 COPY --from=builder /app/main.py ./main.py
 
-# Copy the Instagram service files
 COPY --from=builder /app/services/instagram_service ./services/instagram_service
 
-# Install the runtime dependencies
 RUN pip install -r requirements.txt
 
-# Switch to the non-root user
 USER appuser
 
-# Set the entrypoint
 ENTRYPOINT ["python", "./main.py"]
