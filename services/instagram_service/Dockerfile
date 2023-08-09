@@ -8,7 +8,7 @@ WORKDIR /app
 
 COPY ./protos ./protos
 COPY ./services/instagram_service/Makefile ./Makefile
-RUN pip install google
+
 RUN pip install grpcio-tools
 RUN make build_proto
 
@@ -47,19 +47,19 @@ FROM base as builder
 WORKDIR /app
 
 # Copy poetry files and install dependencies
-COPY ./services/instagram_service/pyproject.toml ./services/instagram_service/poetry.lock ./
+COPY ./pyproject.toml ./poetry.lock ./
 RUN poetry config virtualenvs.create false
 RUN poetry install --no-dev --no-root
 
 # Copy the application files
 COPY . .
-#COPY ./services/instagram_service .
+
 # Export runtime dependencies to requirements.txt
 RUN poetry export -f requirements.txt --output requirements.txt
 
 # Copy the Instagram service files
 COPY services/instagram_service /app/services/instagram_service
-COPY services/instagram_service/main.py /app/main.py
+
 # Install dependencies for the Instagram service
 RUN pip install -r /app/requirements.txt
 
@@ -82,9 +82,8 @@ COPY --from=builder /app/main.py ./main.py
 
 # Copy the Instagram service files
 COPY --from=builder /app/services/instagram_service ./services/instagram_service
-COPY ./services/instagram_service .
+
 # Install the runtime dependencies
-#RUN pip install google
 RUN pip install -r requirements.txt
 
 # Switch to the non-root user
@@ -92,4 +91,3 @@ USER appuser
 
 # Set the entrypoint
 ENTRYPOINT ["python", "./main.py"]
-#VOLUME /usr/data
