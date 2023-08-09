@@ -1,9 +1,9 @@
 import os
 import asyncio
 from dotenv import load_dotenv
-from controller import instagram_Contoller
-from src import client_grpc
-from src import InstagramService
+from services.instagram_service.src import client_grpc
+from services.instagram_service.src import InstagramService
+from services.instagram_service.controller import instagram_Contoller
 
 
 load_dotenv()
