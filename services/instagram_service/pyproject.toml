@@ -12,8 +12,8 @@ instagrapi = "^1.17.13"
 pillow = "^10.0.0"
 datetime = "^5.2"
 asyncio = "^3.4.3"
-grpc = "^1.0.0"
 python-dotenv = "^1.0.0"
+grpcio = "^1.56.2"
 
 [build-system]
 requires = ["poetry-core"]
