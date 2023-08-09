@@ -68,6 +68,16 @@ COPY --from=builder /app/services/instagram_service ./services/instagram_service
 
 RUN pip install -r requirements.txt
 
+ARG UID=10001
+RUN adduser \
+    --disabled-password \
+    --gecos "" \
+    --home "/nonexistent" \
+    --shell "/sbin/nologin" \
+    --no-create-home \
+    --uid "${UID}" \
+    appuser
+
 USER appuser
 
 ENTRYPOINT ["python", "./main.py"]
