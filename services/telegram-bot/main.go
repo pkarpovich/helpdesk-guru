@@ -1,12 +1,16 @@
 package main
 
-import "log"
+import (
+	"log"
+)
 
 func main() {
-	err := initGptServiceConnection()
+	config := loadConfig()
+
+	err := initGptServiceConnection(config)
 	if err != nil {
 		log.Fatalf("fail to connect to gpt service: %v", err)
 	}
 
-	startTelegramBot()
+	startTelegramBot(config)
 }

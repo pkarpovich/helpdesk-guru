@@ -1,3 +1,3 @@
-from .qa_service import QAService
+from .config_service import AppConfig
 from .context_service import ContextService
-from .gpt_service import GptService
+from .qa_service import QAService

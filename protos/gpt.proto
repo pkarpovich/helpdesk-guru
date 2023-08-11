@@ -4,6 +4,11 @@ package gpt;
 
 option go_package = "services/telegram-bot/lib";
 
+message ErrorInfo {
+  string code = 1;
+  string message = 2;
+}
+
 service GptService {
   rpc ask (AskRequest) returns (AskResponse) {}
   rpc clearHistory (ClearHistoryRequest) returns (ClearHistoryResponse) {}
@@ -14,10 +19,12 @@ service GptService {
 message AskRequest {
   string query = 1;
   string conversationId = 2;
+  string contextName = 3;
 }
 
 message AskResponse {
   string answer = 1;
+  ErrorInfo error = 2;
 }
 
 message ClearHistoryRequest {
@@ -26,12 +33,17 @@ message ClearHistoryRequest {
 
 message ClearHistoryResponse {}
 
-message ClearIndexRequest {}
+message ClearIndexRequest {
+  string contextName = 1;
+}
 
-message ClearIndexResponse {}
+message ClearIndexResponse {
+  ErrorInfo error = 1;
+}
 
 message AddGoogleDocsRequest {
   string folderId = 1;
+  string contextName = 2;
 }
 
 message AddGoogleDocsResponse {}

@@ -1,9 +1,18 @@
+from typing import TYPE_CHECKING
+
 from pymongo import MongoClient
+
+if TYPE_CHECKING:
+    from gpt_context.services import AppConfig
 
 
 class ConversationStore:
-    def __init__(self, mongo_uri: str, username: str, password: str):
-        self._client = MongoClient(mongo_uri, username=username, password=password)
+    def __init__(self, config: 'AppConfig'):
+        self._client = MongoClient(
+            config.MONGODB_URI,
+            username=config.MONGODB_USERNAME,
+            password=config.MONGODB_PASSWORD
+        )
         self._db = self._client["gpt_context"]
         self._collection = self._db["conversations"]
 

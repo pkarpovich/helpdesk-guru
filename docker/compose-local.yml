@@ -4,20 +4,23 @@ services:
       context: .
       dockerfile: services/gpt-context/Dockerfile
     restart: unless-stopped
-    expose:
-      - 50051
+    # google drive loader picks a random port for OAuth callback
+    network_mode: host
     environment:
       OPENAI_API_KEY: ${OPENAI_API_KEY}
       OPENAI_MODEL: ${OPENAI_MODEL}
-      REDIS_URL: ${REDIS_URL}
       WEAVIATE_URL: ${WEAVIATE_URL}
       MONGODB_URI: ${MONGODB_URI}
       MONGODB_USERNAME: ${MONGODB_USERNAME}
       MONGODB_PASSWORD: ${MONGODB_PASSWORD}
+      GOOGLE_APPLICATION_TOKEN: ${GOOGLE_APPLICATION_TOKEN}
+      GOOGLE_APPLICATION_CREDENTIALS: ${GOOGLE_APPLICATION_CREDENTIALS}
     volumes:
-      - ./services/gpt-context/source_documents:/app/services/gpt-context/source_documents
+      - ./services/gpt-context/source_documents:/app/source_documents
+      - ./services/gpt-context/.credentials:/app/.credentials
     depends_on:
-      - redis-store
+      - weaviate
+      - conversation-store
 
   telegram-bot:
     build:
@@ -25,20 +28,12 @@ services:
       dockerfile: services/telegram-bot/Dockerfile
     restart: unless-stopped
     environment:
-      GPT_SERVICE_ADDRESS: gpt-service:50051
       TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN}
+      GPT_SERVICE_ADDRESS: gpt-service:50051
+      CONTEXT_NAME: default
+      APP_ENV: production
     depends_on:
       - gpt-service
-
-  redis-store:
-    image: redis/redis-stack:latest
-    expose:
-      - 6379
-    ports:
-      - 6379:6379
-    restart: unless-stopped
-    volumes:
-      - redis-cache-data:/data
 
   weaviate:
     image: semitechnologies/weaviate:1.19.6
@@ -56,7 +51,7 @@ services:
     volumes:
       - weaviate-data:/var/lib/weaviate
 
-  conversation_store:
+  conversation-store:
     image: mongo:6.0.7
     expose:
       - 27017
@@ -69,7 +64,17 @@ services:
     volumes:
       - conversation-store-data:/data/db
 
+  healthcheck:
+    image: louislam/uptime-kuma:1
+    ports:
+      - 3001:3001
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - healthcheck-data:/app/data
+
 volumes:
   conversation-store-data:
   redis-cache-data:
   weaviate-data:
+  healthcheck-data:

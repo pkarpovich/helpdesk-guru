@@ -1,16 +1,21 @@
 import os
+from typing import TYPE_CHECKING
 
 from langchain.document_loaders import TextLoader, PDFMinerLoader, CSVLoader, GoogleDriveLoader
 from langchain.document_loaders.base import BaseLoader
 from langchain.schema import Document
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 
-from gpt_context.adapters.vector_store_adapter import VectorStoreAdapter
+from gpt_context.adapters import VectorStoreAdapter
+
+if TYPE_CHECKING:
+    from gpt_context.services import AppConfig
 
 
 class ContextService:
-    def __init__(self, store: VectorStoreAdapter):
+    def __init__(self, config: 'AppConfig', store: VectorStoreAdapter):
         self.store = store
+        self.config = config
 
     def init(self) -> None:
         for root, _, files in os.walk("source_documents"):
@@ -28,21 +33,19 @@ class ContextService:
                 documents = loader.load()
                 self._add_documents_to_store(documents)
 
-    def clear_index(self) -> None:
-        self.store.truncate()
+    def clear_index(self, context_name) -> None:
+        self.store.truncate(context_name)
 
-    def add_google_docs(self, folder_id: str) -> None:
-        credentials_path = os.path.join(os.getcwd(), "..", ".credentials/credentials.json")
-        token_path = os.path.join(os.getcwd(), "..", ".credentials/token.json")
-
-        loader = GoogleDriveLoader(
-            credentials_path=credentials_path,
-            token_path=token_path,
-            folder_id=folder_id,
-            recursive=False,
-        )
+    def add_google_docs(self, folder_id: str, context_name: str) -> None:
+        loader = self._prepare_google_drive_loader(folder_id)
         docs = loader.load()
-        self._add_documents_to_store(docs)
+        self._add_documents_to_store(docs, context_name)
+
+    def check_google_docs_connectivity(self, folder_id: str) -> bool:
+        loader = self._prepare_google_drive_loader(folder_id)
+        docs = loader.load()
+
+        return len(docs) > 0
 
     @staticmethod
     def _get_file_loader(root: str, file: str) -> BaseLoader:
@@ -59,9 +62,16 @@ class ContextService:
 
         return loader
 
-    def _add_documents_to_store(self, documents: list[Document]) -> None:
+    def _add_documents_to_store(self, documents: list[Document], context_name: str) -> None:
         text_splitter = RecursiveCharacterTextSplitter(chunk_size=200, chunk_overlap=200, separators=["Question"])
         texts = text_splitter.split_documents(documents)
 
-        self.store.from_documents(texts)
+        self.store.from_documents(texts, index_name=context_name)
 
+    def _prepare_google_drive_loader(self, folder_id: str) -> GoogleDriveLoader:
+        return GoogleDriveLoader(
+            credentials_path=self.config.GOOGLE_APPLICATION_CREDENTIALS,
+            token_path=self.config.GOOGLE_APPLICATION_TOKEN,
+            folder_id=folder_id,
+            recursive=False,
+        )

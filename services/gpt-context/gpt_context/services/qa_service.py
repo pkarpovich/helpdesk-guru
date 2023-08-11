@@ -6,9 +6,10 @@ from langchain.chat_models import ChatOpenAI
 from langchain.memory import ConversationBufferMemory, ChatMessageHistory
 from langchain.schema import messages_to_dict, messages_from_dict
 
-from gpt_context.adapters.vector_store_adapter import VectorStoreAdapter
+from gpt_context.adapters import VectorStoreAdapter
+from gpt_context.exceptions import BusinessLogicException, ErrorCode, ErrorMessage
 from gpt_context.services.prompts.qa_prompt import qa_prompt
-from gpt_context.stores.conversation_store import ConversationStore
+from gpt_context.stores import ConversationStore
 
 callbacks = [StreamingStdOutCallbackHandler()]
 
@@ -17,25 +18,33 @@ class QAService:
     def __init__(self, model_name: str, store: VectorStoreAdapter, conversation_store: ConversationStore):
         self.conversation_store = conversation_store
         self.history = ChatMessageHistory()
-        self.memory = ConversationBufferMemory(chat_memory=self.history, memory_key="chat_history", return_messages=True)
+        self.memory = ConversationBufferMemory(chat_memory=self.history, memory_key="chat_history",
+                                               return_messages=True)
+        self.store = store
 
         llm = ChatOpenAI(model_name=model_name, callbacks=callbacks, temperature=0)
 
-        question_generator = LLMChain(llm=llm, prompt=CONDENSE_QUESTION_PROMPT, verbose=True)
-        combine_docs_chain = load_qa_chain(llm, chain_type="stuff", prompt=qa_prompt, verbose=True)
+        self.question_generator = LLMChain(llm=llm, prompt=CONDENSE_QUESTION_PROMPT, verbose=True)
+        self.combine_docs_chain = load_qa_chain(llm, chain_type="stuff", prompt=qa_prompt, verbose=True)
 
-        self.qa = ConversationalRetrievalChain(
+    def ask(self, query: str, conversation_id: str, context_name: str) -> str:
+        if not self.store.context_exists(context_name):
+            raise BusinessLogicException(
+                ErrorCode.NOT_FOUND,
+                ErrorMessage.CONTEXT_NOT_FOUND.format(context_name=context_name)
+            )
+
+        self._load_messages_if_needed(conversation_id)
+
+        qa = ConversationalRetrievalChain(
             memory=self.memory,
-            retriever=store.retriever,
-            question_generator=question_generator,
-            combine_docs_chain=combine_docs_chain,
+            retriever=self.store.get_retriever(context_name),
+            question_generator=self.question_generator,
+            combine_docs_chain=self.combine_docs_chain,
             verbose=True,
         )
 
-    def ask(self, query: str, conversation_id: str) -> str:
-        self._load_messages_if_needed(conversation_id)
-
-        res = self.qa({"question": query})
+        res = qa({"question": query})
         self.conversation_store.save_or_update(
             conversation_id,
             messages_to_dict(self.memory.chat_memory.messages)
