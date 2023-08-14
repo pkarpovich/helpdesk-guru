@@ -1,5 +1,4 @@
 from instagrapi import Client
-from typing import List
 from datetime import datetime
 class InstagramService:
     def __init__(self, username: str, password: str, proxy: str = None) -> None:
@@ -17,7 +16,7 @@ class InstagramService:
         thread_id = self.client.direct_thread(*recipients).id
         self.client.direct_send(message, thread_id)
 
-    def read_direct_messages(self) -> List[str]:
+    def read_direct_messages(self) -> list:
         messages = []
         threads = self.client.direct_threads()
         for thread in threads:
