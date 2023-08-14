@@ -1,6 +1,6 @@
 ARG PYTHON_VERSION=3.11.4
 
-FROM python:${PYTHON_VERSION}-slim as proto-builder
+FROM python:${PYTHON_VERSION}-slim AS proto-builder
 
 RUN apt-get update && apt-get install -y make
 
@@ -12,7 +12,7 @@ RUN pip install google
 RUN pip install grpcio-tools
 RUN make build_proto
 
-FROM python:${PYTHON_VERSION}-slim as base
+FROM python:${PYTHON_VERSION}-slim AS base
 
 ENV \
     PIP_DISABLE_PIP_VERSION_CHECK=1 \
@@ -36,7 +36,7 @@ RUN set -ex \
     && apt-get clean -y \
     && rm -rf /var/lib/apt/lists/*
 
-FROM base as builder
+FROM base AS builder
 
 WORKDIR /app
 
@@ -52,7 +52,7 @@ COPY services/instagram_service /app/services/instagram_service
 
 RUN pip install -r /app/requirements.txt
 
-FROM base as runtime
+FROM base AS runtime
 
 ENV PYTHONPATH="/app:${PYTHONPATH}"
 
