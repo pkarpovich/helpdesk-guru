@@ -1,10 +1,10 @@
 import os
 import asyncio
 from dotenv import load_dotenv
-from services.instagram_service.src import client_grpc
+#from services.instagram_service.src import client_grpc
 from services.instagram_service.src import InstagramService
 from services.instagram_service.controller import instagram_Contoller
-
+from services.instagram_service.src import client_grpc
 
 load_dotenv()
 
