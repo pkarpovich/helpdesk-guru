@@ -1,4 +1,5 @@
 import asyncio
+from typing import List
 from services.instagram_service.src import client_grpc
 from services.instagram_service.src import InstagramService
 class instagram_Contoller:
@@ -6,7 +7,7 @@ class instagram_Contoller:
         self.client = client
         self.instagram_service = instagram_service
 
-    def read_direct_messages(self) -> list:
+    def read_direct_messages(self) -> List[str]:
         return self.instagram_service.read_direct_messages()
 
     def run(self, query: str) -> str:
