@@ -1,8 +1,6 @@
 import grpc
-import gpt_pb2 as gpt
-#from services.instagram_service.src import gpt_pb2 as gpt
-import gpt_pb2_grpc as gpt_grpc
-#from services.instagram_service.src import gpt_pb2_grpc as gpt_grpc
+from services.instagram_service.src import gpt_pb2 as gpt
+from services.instagram_service.src import gpt_pb2_grpc as gpt_grpc
 class client_grpc:
     def __init__(self, contextName: str, conversationId: str, target: str) -> None:
         self.target = target
