@@ -40,9 +40,10 @@ FROM base AS builder
 
 WORKDIR /app
 
-COPY ./pyproject.toml ./poetry.lock ./
+COPY ./services/instagram_service/pyproject.toml ./services/instagram_service/poetry.lock ./
 RUN poetry config virtualenvs.create false
 RUN poetry install --no-dev --no-root
+COPY ./services/instagram_service/main.py ./
 
 COPY . .
 
