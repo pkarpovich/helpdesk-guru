@@ -33,7 +33,6 @@ class InstagramService:
             for message in messages:
                 if latest_timestamp is None or message.timestamp > latest_timestamp:
                     if message.text and message.user_id != self.client.user_id and message.thread_id == thread_id:
-                        # Add the message to the list if it is a direct message
                         messages.append(message.text.strip())
                     self.latest_message_timestamps[thread_id] = message.timestamp
             if latest_timestamp is None:
