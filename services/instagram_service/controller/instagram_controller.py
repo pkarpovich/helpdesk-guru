@@ -7,17 +7,21 @@ class InstagramContoller:
     def __int__(self, instagram_service: InstagramService, client: ClientGrpc) -> None:
         self.client = client
         self.instagram_service = instagram_service
-
+    
+    def login(self) -> None:
+        return self.instagram_service.login()
+    
     def read_direct_messages(self) -> list:
         return self.instagram_service.read_direct_messages()
-
+    
     def run(self, query: str) -> str:
         return self.client.run(query)
-
+    
     def send_direct_messages(self, message: str, sender_username: str) -> None:
         return self.instagram_service.send_direct_message(message, sender_username)
 
     async def start(self, interval_seconds=60) -> None:
+    self.login()
     while True:
         direct_messages = self.read_direct_messages()
         if direct_messages is None:
