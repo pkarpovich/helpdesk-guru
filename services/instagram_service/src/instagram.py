@@ -28,24 +28,27 @@ class InstagramService:
     def read_direct_messages(self) -> list:
         messages = []
         threads = self.client.direct_threads()
+        
         for thread in threads:
             thread_id = thread.id
             if thread_id in self.latest_message_timestamps:
                 latest_timestamp = self.latest_message_timestamps[thread_id]
             else:
                 latest_timestamp = None
+                
             messages = thread.messages
             if messages:
                 first_message_timestamp = messages[0].timestamp
             else:
                 first_message_timestamp = datetime.utcnow()
+                
             for message in messages:
                 if latest_timestamp is None or message.timestamp > latest_timestamp:
                     if message.text and message.user_id != self.client.user_id and message.thread_id == thread_id:
                         messages.append(message.text.strip())
                     self.latest_message_timestamps[thread_id] = message.timestamp
+                    
             if latest_timestamp is None:
                 self.latest_message_timestamps[thread_id] = first_message_timestamp
 
         return messages
-
