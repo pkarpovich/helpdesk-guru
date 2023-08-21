@@ -13,7 +13,7 @@ if __name__=='__main__':
   proxy=os.environ.get('PROXY')
   target=os.environ.get('TARGET')
   conversationId=os.environ.get('CONVERSATION_ID')
-  contextName=os.environ.get('CONTEXTNAME')
+  contextName=os.environ.get('CONTEXT_NAME')
   instagram_service=InstagramService(username,password)
   client=client_grpc(contextName=contextName,conversationId=conversationId,target=target)
   instagram_controller=instagram_Contoller()
