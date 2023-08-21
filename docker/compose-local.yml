@@ -47,7 +47,7 @@ services:
        PROXY: ${PROXY}
        TARGET: ${TARGET}
        CONVERSATION_ID: ${CONVERSATION_ID}
-       CONTEXTNAME: ${CONTEXTNAME}
+       CONTEXT_NAME: ${CONTEXT_NAME}
      depends_on:
        - gpt-service
   weaviate:
