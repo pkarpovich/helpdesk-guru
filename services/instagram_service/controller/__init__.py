@@ -1,1 +1,1 @@
-from .instagram_controller import instagram_Contoller
+from .instagram_controller import InstagramContoller
