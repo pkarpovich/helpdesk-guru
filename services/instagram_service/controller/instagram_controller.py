@@ -1,10 +1,10 @@
 import asyncio
-from services.instagram_service.src import client_grpc
+from services.instagram_service.src import ClientGrpc
 from services.instagram_service.src import InstagramService
 
 
 class InstagramContoller:
-    def __int__(self, instagram_service: InstagramService, client: client_grpc) -> None:
+    def __int__(self, instagram_service: InstagramService, client: ClientGrpc) -> None:
         self.client = client
         self.instagram_service = instagram_service
 
