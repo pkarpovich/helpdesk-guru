@@ -3,11 +3,17 @@ from datetime import datetime
 class InstagramService:
     def __init__(self, username: str, password: str, proxy: str = None) -> None:
         self.client = Client(proxy=proxy)
+        self.username=username
+        self.password=password
+
+    
+    def login(self) -> None:
         try:
-            self.client.login(username, password)
+            self.client.login(self.username, self.password)
         except Exception as e:
             print(f"Error while setting up Instagram client: {e}")
         self.latest_message_timestamps = {}
+
 
     def send_direct_message(self, message: str, sender_username: str) -> None:
         sender_id = self.client.user_id_from_username(sender_username)
@@ -16,6 +22,7 @@ class InstagramService:
         thread_id = self.client.direct_thread(*recipients).id
         self.client.direct_send(message, thread_id)
 
+    
     def read_direct_messages(self) -> list:
         messages = []
         threads = self.client.direct_threads()
