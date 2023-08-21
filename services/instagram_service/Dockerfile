@@ -8,7 +8,6 @@ WORKDIR /app
 
 COPY ./protos ./protos
 COPY ./services/instagram_service/Makefile ./Makefile
-RUN pip install google
 RUN pip install grpcio-tools
 RUN make build_proto
 
