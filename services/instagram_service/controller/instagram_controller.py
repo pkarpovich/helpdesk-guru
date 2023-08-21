@@ -18,11 +18,12 @@ class InstagramContoller:
         return self.instagram_service.send_direct_message(message, sender_username)
 
     async def start(self, interval_seconds=60) -> None:
-        while True:
-            direct_messages = self.read_direct_messages()
-            if direct_messages:
-                for message in direct_messages:
-                    sender_username = self.instagram_service.client.username_from_user_id(message.user_id)
-                    response = self.run(message)
-                    self.send_direct_messages(message=response, sender_username=sender_username)
-            await asyncio.sleep(interval_seconds)
+    while True:
+        direct_messages = self.read_direct_messages()
+        if direct_messages is None:
+            continue
+        for message in direct_messages:
+            sender_username = self.instagram_service.client.username_from_user_id(message.user_id)
+            response = self.run(message)
+            self.send_direct_messages(message=response, sender_username=sender_username)
+        await asyncio.sleep(interval_seconds)
