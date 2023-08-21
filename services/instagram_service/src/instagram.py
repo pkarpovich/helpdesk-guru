@@ -1,5 +1,7 @@
 from instagrapi import Client
 from datetime import datetime
+
+
 class InstagramService:
     def __init__(self, username: str, password: str, proxy: str = None) -> None:
         self.client = Client(proxy=proxy)
