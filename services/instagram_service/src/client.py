@@ -4,8 +4,9 @@ from services.instagram_service.src import gpt_pb2 as gpt
 from services.instagram_service.src import gpt_pb2_grpc as gpt_grpc
 from services.instagram_service.configs import AppConfig
 
+
 class ClientGrpc:
-    def __init__(self, config:'AppConfig') -> None:
+    def __init__(self, config: 'AppConfig') -> None:
         self.target = config.TARGET
         self.contextName = config.CONTEXT_NAME
         self.conversationId = config.CONVERSATION_ID

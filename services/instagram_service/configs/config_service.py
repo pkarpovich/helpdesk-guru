@@ -8,12 +8,12 @@ class AppConfigError(Exception):
 
 
 class AppConfig:
-    PASSWORD : str
-    USER_NAME : str
-    PROXY : str
-    TARGET : str
-    CONVERSATION_ID : str
-    CONTEXT_NAME : str
+    PASSWORD: str
+    USER_NAME: str
+    PROXY: str
+    TARGET: str
+    CONVERSATION_ID: str
+    CONTEXT_NAME: str
 
     def __init__(self, env):
         load_dotenv()

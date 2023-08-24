@@ -12,10 +12,10 @@ load_dotenv()
 
 config = AppConfig(os.environ)
 
-instagram_service=InstagramService(config=config)
-client=ClientGrpc(config=config)
-instagram_controller=InstagramContoller()
+instagram_service = InstagramService(config=config)
+client = ClientGrpc(config=config)
+instagram_controller = InstagramContoller()
 instagram_controller.__int__(instagram_service, client)
 
-if __name__=='__main__':
- asyncio.run(instagram_controller.start())
+if __name__ == '__main__':
+    asyncio.run(instagram_controller.start())
