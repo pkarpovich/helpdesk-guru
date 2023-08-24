@@ -1,12 +1,14 @@
 from instagrapi import Client
 from datetime import datetime
 
+from services.instagram_service.configs import AppConfig
+
 
 class InstagramService:
-    def __init__(self, username: str, password: str, proxy: str = None) -> None:
-        self.client = Client(proxy=proxy)
-        self.username=username
-        self.password=password
+    def __init__(self, config:'AppConfig') -> None:
+        self.client = Client(proxy=config.PROXY)
+        self.username=config.USER_NAME
+        self.password=config.PASSWORD
 
     
     def login(self) -> None:
