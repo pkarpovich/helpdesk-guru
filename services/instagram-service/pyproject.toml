@@ -1,21 +1,23 @@
 [tool.poetry]
-name = "instagram_service"
+name = "instagram-service"
 version = "0.1.0"
 description = ""
 authors = ["MaximPyanin <maximpyanin@icloud.com>"]
 readme = "README.md"
-packages = [{include = "instagram_service"}]
+packages = [{ include = "instagram_service" }]
 
 [tool.poetry.dependencies]
 python = "^3.11.4"
 instagrapi = "^1.17.13"
 pillow = "^10.0.0"
-datetime = "^5.2"
-asyncio = "^3.4.3"
 python-dotenv = "^1.0.0"
 grpcio = "^1.56.2"
-google = "^3.0.0"
 grpcio-tools = "^1.57.0"
+betterproto = "^2.0.0b6"
+
+
+[tool.poetry.group.dev.dependencies]
+betterproto = { version = "^2.0.0b6", extras = ["compiler"] }
 
 
 [build-system]

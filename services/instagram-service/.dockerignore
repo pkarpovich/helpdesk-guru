@@ -8,7 +8,7 @@
 **/*LICENSE
 example.env
 README.md
-!main.py
+!instagram_service/main.py
 !poetry.lock
 !pyproject.toml
 !Makefile
