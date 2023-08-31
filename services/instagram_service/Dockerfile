@@ -7,9 +7,11 @@ RUN apt-get update && apt-get install -y make
 WORKDIR /app
 
 COPY ./protos ./protos
-COPY ./services/instagram_service/Makefile ./Makefile
-RUN pip install grpcio-tools
-RUN make build_proto
+#COPY ./services/instagram_service/Makefile ./Makefile
+RUN mkdir -p ./lib
+RUN pip install grpcio grpcio-tools
+RUN pip install --pre "betterproto[compiler]"
+RUN python -m grpc_tools.protoc -I /app/protos --python_betterproto_out=/app/lib /app/protos/*.proto
 
 FROM python:${PYTHON_VERSION}-slim AS base
 
@@ -42,7 +44,7 @@ WORKDIR /app
 COPY ./services/instagram_service/pyproject.toml ./services/instagram_service/poetry.lock ./
 RUN poetry config virtualenvs.create false
 RUN poetry install --no-dev --no-root
-COPY ./services/instagram_service/main.py ./
+COPY ./services/instagram_service/instagram_service/main.py ./
 
 COPY . .
 
