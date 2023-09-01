@@ -7,7 +7,7 @@ RUN apt-get update && apt-get install -y make
 WORKDIR /app
 
 COPY ./protos ./protos
-#COPY ./services/instagram_service/Makefile ./Makefile
+
 RUN mkdir -p ./lib
 RUN pip install grpcio grpcio-tools
 RUN pip install --pre "betterproto[compiler]"
