@@ -1,7 +1,7 @@
 import asyncio
 
 
-from services.instagram_service.instagram_service.services import InstagramService, GptService
+from instagram_service.services import InstagramService, GptService
 
 class InstagramContoller:
     def __int__(self, instagram_service: InstagramService, client: GptService) -> None:
