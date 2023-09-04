@@ -1,8 +1,7 @@
 from instagrapi import Client
 from datetime import datetime
 
-from services.instagram_service.instagram_service.configs import AppConfig
-
+from instagram_service.services.config_service import AppConfig
 class InstagramService:
     __client: Client = None
     def __init__(self, config:'AppConfig') -> None:
@@ -18,6 +17,7 @@ class InstagramService:
     
     def login(self) -> None:
         try:
+            #self.client.login_by_sessionid(self.session_id)
             self.client.login(self.username, self.password,verification_code=self.verification_code)
         except Exception as e:
             print(f"Error while setting up Instagram client: {e}")
