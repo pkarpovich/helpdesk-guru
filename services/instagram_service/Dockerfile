@@ -41,16 +41,16 @@ FROM base AS builder
 
 WORKDIR /app
 
-COPY ./services/instagram_service/pyproject.toml ./services/instagram_service/poetry.lock ./
+COPY ./services/instagram-service/pyproject.toml ./services/instagram-service/poetry.lock ./
 RUN poetry config virtualenvs.create false
 RUN poetry install --no-dev --no-root
-COPY ./services/instagram_service/instagram_service/main.py ./
+COPY ./services/instagram-service/instagram_service/main.py ./
 
 COPY . .
 
 RUN poetry export -f requirements.txt --output requirements.txt
 
-COPY services/instagram_service /app/services/instagram_service
+COPY services/instagram-service /app/services/instagram-service
 
 RUN pip install -r /app/requirements.txt
 
@@ -66,7 +66,7 @@ COPY --from=builder /app/requirements.txt ./
 
 COPY --from=builder /app/main.py ./main.py
 
-COPY --from=builder /app/services/instagram_service ./services/instagram_service
+COPY --from=builder /app/services/instagram-service ./services/instagram-service
 
 RUN pip install -r requirements.txt
 
