@@ -1,5 +1,7 @@
-from lib.gpt import GptServiceStub,AskRequest
-from services.instagram_service.instagram_service.configs import AppConfig
+from grpclib.client import Channel
+
+from instagram_service.services.lib.gpt import GptServiceStub,AskRequest
+from instagram_service.services import AppConfig
 class GptService:
     def __init__(self, config:'AppConfig') -> None:
         self.host=config.HOST
