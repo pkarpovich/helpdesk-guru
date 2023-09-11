@@ -2,16 +2,18 @@ ARG PYTHON_VERSION=3.11.4
 
 FROM python:${PYTHON_VERSION}-slim AS proto-builder
 
-RUN apt-get update && apt-get install -y make
+RUN apt-get update \
+    && apt-get install -y make
 
 WORKDIR /app
 
 COPY ./protos ./protos
 
-RUN mkdir -p ./lib
-RUN pip install grpcio grpcio-tools
-RUN pip install --pre "betterproto[compiler]"
-RUN python -m grpc_tools.protoc -I /app/protos --python_betterproto_out=/app/lib /app/protos/*.proto
+RUN \
+    mkdir -p ./lib \
+    && pip install grpcio grpcio-tools \
+    && pip install --pre "betterproto[compiler]" \
+    && python -m grpc_tools.protoc -I /app/protos --python_betterproto_out=/app/lib /app/protos/*.proto
 
 FROM python:${PYTHON_VERSION}-slim AS base
 
@@ -26,7 +28,8 @@ ENV \
     POETRY_CACHE_DIR="/var/cache/pypoetry" \
     PYTHONWARNINGS="ignore::DeprecationWarning"
 
-RUN set -ex \
+RUN \
+    set -e \
     && addgroup --system --gid 1001 appgroup \
     && adduser --system --uid 1001 --gid 1001 --no-create-home appuser \
     && apt-get update \
@@ -39,20 +42,17 @@ RUN set -ex \
 
 FROM base AS builder
 
+RUN pip install poetry==${POETRY_VERSION}
+
 WORKDIR /app
 
 COPY ./services/instagram-service/pyproject.toml ./services/instagram-service/poetry.lock ./
-RUN poetry config virtualenvs.create false
-RUN poetry install --no-dev --no-root
-COPY ./services/instagram-service/instagram_service/main.py ./
 
-COPY . .
+RUN \
+    poetry config virtualenvs.create false \
+    && poetry install --no-dev --no-root
 
 RUN poetry export -f requirements.txt --output requirements.txt
-
-COPY services/instagram-service /app/services/instagram-service
-
-RUN pip install -r /app/requirements.txt
 
 FROM base AS runtime
 
@@ -64,12 +64,10 @@ COPY --from=proto-builder /app/lib ./lib
 
 COPY --from=builder /app/requirements.txt ./
 
-COPY --from=builder /app/main.py ./main.py
+COPY ./services/instagram-service .
 
-COPY --from=builder /app/services/instagram-service ./services/instagram-service
-
-RUN pip install -r requirements.txt
+RUN pip install -r /app/requirements.txt
 
 USER appuser
 
-ENTRYPOINT ["python", "./main.py"]
+ENTRYPOINT ["python", "instagram_service/main.py"]
