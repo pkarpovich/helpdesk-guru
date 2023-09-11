@@ -34,6 +34,7 @@ services:
       APP_ENV: production
     depends_on:
       - gpt-service
+  
   instagram_service:
     build:
       context: .
@@ -42,9 +43,11 @@ services:
     environment:
       GPT_SERVICE_ADDRESS: gpt-service:50051
       PASSWORD: ${PASSWORD}
-      USER_NAME: ${USER_NAME}
       PROXY: ${PROXY}
-      TARGET: ${TARGET}
+      USER_NAME: ${USER_NAME}
+      PORT: ${PORT}
+      VERIFICATION_CODE: ${VERIFICATION_CODE}
+      HOST: ${HOST}
       CONVERSATION_ID: ${CONVERSATION_ID}
       CONTEXT_NAME: ${CONTEXT_NAME}
     depends_on:
