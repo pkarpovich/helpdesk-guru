@@ -20,7 +20,6 @@ class InstagramService:
 
     def login(self) -> None:
         try:
-            # self.client.login_by_sessionid(self.session_id)
             self.client.login(self.username, self.password, verification_code=self.verification_code)
         except Exception as e:
             print(f"Error while setting up Instagram client: {e}")
