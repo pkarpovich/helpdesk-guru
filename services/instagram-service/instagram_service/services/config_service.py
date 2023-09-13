@@ -13,7 +13,7 @@ class AppConfig:
     USER_NAME: str
     PROXY: str
     HOST: str
-    PORT: str
+    PORT: int
     CONVERSATION_ID: str
     CONTEXT_NAME: str
 
