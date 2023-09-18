@@ -18,6 +18,3 @@ async def test_ask(gpt_fixture,mocker):
     mocker.patch.object(gpt_fixture,'ask',return_value=str)
     assert await gpt_fixture.ask(os.environ.get('TEST_QUERY')) == str
 
-
-if __name__=='__main__':
-    pytest.main()
