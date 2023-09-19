@@ -31,6 +31,7 @@ def instagram_controller_fixture2():
 
     instagram_controller = InstagramContoller()
     instagram_controller.__int__(instagram_service,gpt_service)
+    
     instagram_controller.login()
 
     return instagram_controller
