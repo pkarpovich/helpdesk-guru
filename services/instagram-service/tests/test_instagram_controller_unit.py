@@ -27,9 +27,6 @@ def test_login(instagram_controller_fixture,mocker):
     assert instagram_controller_fixture.login() == None
 
 def test_read(instagram_controller_fixture,mocker):
-    mocker.patch.object(instagram_controller_fixture, 'login', return_value=None)
-    assert instagram_controller_fixture.login() == None
-
     mocker.patch.object(instagram_controller_fixture,'read_direct_messages',return_value=list)
     assert instagram_controller_fixture.read_direct_messages() == list
 
@@ -39,9 +36,6 @@ async def test_ask(instagram_controller_fixture,mocker):
     assert await instagram_controller_fixture.ask(os.environ.get('QUERY')) == str
 
 def test_send(instagram_controller_fixture,mocker):
-    mocker.patch.object(instagram_controller_fixture, 'login', return_value=None)
-    assert instagram_controller_fixture.login() == None
-
     mocker.patch.object(instagram_controller_fixture,'send_direct_messages',return_value=None)
     assert isinstance(os.environ.get('TEST_MESSAGE'),str)
     assert isinstance(os.environ.get('TEST_SENDER_USERNAME'),str)
