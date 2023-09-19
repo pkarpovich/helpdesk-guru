@@ -21,6 +21,7 @@ def instagram_controller_fixture1():
     instagram_controller.__int__(instagram_service,gpt_service)
 
     return instagram_controller
+    
 @pytest.fixture
 def instagram_controller_fixture2():
     config = AppConfig(os.environ)
@@ -47,6 +48,7 @@ async def test_ask(instagram_controller_fixture1):
 def test_send(instagram_controller_fixture2):
     assert isinstance(os.environ.get('TEST_MESSAGE'),str)
     assert isinstance(os.environ.get('TEST_SENDER_USERNAME'),str)
+    
     assert instagram_controller_fixture2.send_direct_messages(os.environ.get('TEST_MESSAGE'), os.environ.get('TEST_SENDER_USERNAME'))
 
 @pytest.mark.asyncio
