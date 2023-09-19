@@ -55,3 +55,12 @@ def test_send(instagram_controller_fixture2):
 @pytest.mark.asyncio
 async def test_start(instagram_controller_fixture1):
     assert await instagram_controller_fixture1.start()
+
+@pytest.mark.xfail
+def test_fail_result(instagram_controller_fixture2):
+    result1 = instagram_controller_fixture2.send_direct_messages(os.environ.get('TEST_MESSAGE'), os.environ.get('TEST_SENDER_USERNAME'))
+    assert result1 is not None
+
+    result2=instagram_controller_fixture2.read_direct_messages()
+    assert result2 is not list
+    
