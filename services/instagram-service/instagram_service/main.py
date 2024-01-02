@@ -20,7 +20,7 @@ async def main():
     client = GptService(config=config)
     
     instagram_controller = InstagramContoller()
-    instagram_controller.__int__(instagram_service, client)
+    instagram_controller.__init__(instagram_service, client)
     
     await instagram_controller.start()
 
