@@ -1,0 +1,13 @@
+[run]
+omit =
+    */services/instagram-service/lib/*.py
+    */services/instagram-service/lib/gpt/__init__.py
+    */services/instagram-service/instagram_service/controller/*.py
+    */services/instagram-service/instagram_service/services/config_service.py
+    */services/instagram-service/tests/*.py
+    */services/instagram_service/main.py
+    */services/instagram-service/instagram_service/__init__.py
+    */services/instagram-service/instagram_service/main.py
+
+
+

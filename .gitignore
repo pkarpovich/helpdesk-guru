@@ -183,3 +183,9 @@ context.txt
 **/.env
 **/lib
 **/.idea
+
+# coverage results
+.coverage
+
+# configuration for pytest
+**/.pytest_cache
