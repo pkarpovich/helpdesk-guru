@@ -34,7 +34,25 @@ services:
       APP_ENV: production
     depends_on:
       - gpt-service
-
+   
+  instagram_service:
+    build:
+      context: .
+      dockerfile: services/instagram-service/Dockerfile
+    restart: unless-stopped
+    environment:
+      GPT_SERVICE_ADDRESS: gpt-service:50051
+      PASSWORD: ${PASSWORD}
+      USER_NAME: ${USER_NAME}
+      PROXY: ${PROXY}
+      VERIFICATION_CODE: ${VERIFICATION_CODE}
+      HOST: ${HOST}
+      PORT: ${PORT}
+      CONVERSATION_ID: ${CONVERSATION_ID}
+      CONTEXT_NAME: ${CONTEXT_NAME}
+    depends_on:
+      - gpt-service
+  
   weaviate:
     image: semitechnologies/weaviate:1.19.6
     expose:
